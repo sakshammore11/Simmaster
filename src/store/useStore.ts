@@ -246,6 +246,7 @@ export const useStore = create<StoreState>()(
                 ...(state.conceptProgress[itemId]?.handwrittenPhotos || []),
                 photo,
               ],
+              lastAccessed: Date.now(),
             },
           },
         })),
@@ -275,6 +276,7 @@ export const useStore = create<StoreState>()(
             [itemId]: {
               ...state.conceptProgress[itemId],
               videoWatched: true,
+              lastAccessed: Date.now(),
             },
           },
         })),
