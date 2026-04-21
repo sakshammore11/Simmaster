@@ -41,6 +41,8 @@ export default function SignUpPage() {
     setLoading(true);
     
     try {
+      console.log('Attempting signup with email:', formData.email);
+      
       // Sign up
       const signupResponse = await fetch("/api/auth/signup", {
         method: "POST",
@@ -51,9 +53,13 @@ export default function SignUpPage() {
         }),
       });
       
+      console.log('Signup response status:', signupResponse.status);
+      console.log('Signup response ok:', signupResponse.ok);
+      
       if (!signupResponse.ok) {
         const error = await signupResponse.json();
-        throw new Error(error.error || "Signup failed");
+        console.error('Signup API error:', error);
+        throw new Error(error.details || error.error || "Signup failed");
       }
       
       // Auto login after signup
