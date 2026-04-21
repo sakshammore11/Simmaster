@@ -33,17 +33,51 @@ export function calculateStudyStats(
   customDailyTarget?: number,
   customCompletedToday?: number
 ): StudyStats {
+  // Validate inputs
+  if (!conceptProgress || typeof conceptProgress !== 'object') {
+    console.error('Invalid conceptProgress provided');
+    conceptProgress = {};
+  }
+
   const totalConcepts = syllabusData.reduce((sum, unit) => sum + unit.concepts.length, 0);
   const totalQuestions = pyqData.length;
   const totalItems = totalConcepts + totalQuestions;
 
+  // Avoid division by zero
+  if (totalItems === 0) {
+    console.warn('No items found in syllabus or pyqs');
+    return {
+      totalConcepts: 0,
+      totalQuestions: 0,
+      totalItems: 0,
+      examDate: new Date(examDate),
+      daysRemaining: 0,
+      dailyTarget: 0,
+      completedConcepts: 0,
+      completedQuestions: 0,
+      completedToday: 0,
+      overallProgress: 0,
+      onTrack: false,
+      remainingConcepts: 0,
+      remainingQuestions: 0,
+      remainingItems: 0,
+      unitBreakdown: [],
+    };
+  }
+
+  // Create new date objects to avoid mutation
   const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   const examDay = new Date(examDate);
-  examDay.setHours(0, 0, 0, 0);
+  const examDayStart = new Date(examDay.getFullYear(), examDay.getMonth(), examDay.getDate());
   
-  const daysRemaining = Math.max(1, Math.ceil((examDay.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
-  const dailyTarget = customDailyTarget || Math.ceil(totalItems / daysRemaining);
+  const daysRemaining = Math.max(1, Math.ceil((examDayStart.getTime() - todayStart.getTime()) / (1000 * 60 * 60 * 24)));
+  
+  // Validate customDailyTarget
+  const validatedDailyTarget = customDailyTarget !== undefined && customDailyTarget > 0 
+    ? customDailyTarget 
+    : Math.ceil(totalItems / daysRemaining);
+  const dailyTarget = validatedDailyTarget;
 
   // Count completed items based on strict requirements (video + notes)
   const completedConcepts = Object.entries(conceptProgress).filter(([id, c]) => {
@@ -56,14 +90,16 @@ export function calculateStudyStats(
     return isQuestion && c.handwritten && c.videoWatched;
   }).length;
   
-  const completedToday = customCompletedToday !== undefined 
-    ? customCompletedToday
+  // Validate customCompletedToday
+  const validatedCompletedToday = customCompletedToday !== undefined && customCompletedToday >= 0
+    ? Math.min(customCompletedToday, totalItems) // Cap at total items
     : Object.values(conceptProgress).filter((c) => {
         if (!c.lastAccessed) return false;
         const lastAccess = new Date(c.lastAccessed);
-        lastAccess.setHours(0, 0, 0, 0);
-        return lastAccess.getTime() === today.getTime() && c.handwritten && c.videoWatched;
+        const lastAccessStart = new Date(lastAccess.getFullYear(), lastAccess.getMonth(), lastAccess.getDate());
+        return lastAccessStart.getTime() === todayStart.getTime() && c.handwritten && c.videoWatched;
       }).length;
+  const completedToday = validatedCompletedToday;
 
   const remainingConcepts = totalConcepts - completedConcepts;
   const remainingQuestions = totalQuestions - completedQuestions;
@@ -72,10 +108,10 @@ export function calculateStudyStats(
   const overallProgress = ((completedConcepts + completedQuestions) / totalItems) * 100;
   
   // Calculate on track based on remaining items and days
-  const expectedDailyTarget = Math.ceil(remainingItems / daysRemaining);
+  const expectedDailyTarget = daysRemaining > 0 ? Math.ceil(remainingItems / daysRemaining) : 0;
   const onTrack = dailyTarget >= expectedDailyTarget;
 
-  // Unit-wise breakdown
+  // Unit-wise breakdown with division by zero protection
   const unitBreakdown = syllabusData.map(unit => {
     const unitConceptIds = unit.concepts.map(c => c.id);
     const unitCompletedConcepts = unitConceptIds.filter(id => 
@@ -90,6 +126,9 @@ export function calculateStudyStats(
     const unitTotal = unit.concepts.length + unitQuestions.length;
     const unitCompleted = unitCompletedConcepts + unitCompletedQuestions;
     
+    // Avoid division by zero
+    const progress = unitTotal > 0 ? (unitCompleted / unitTotal) * 100 : 0;
+    
     return {
       unitId: unit.id,
       unitTitle: unit.title,
@@ -97,7 +136,7 @@ export function calculateStudyStats(
       completedConcepts: unitCompletedConcepts,
       totalQuestions: unitQuestions.length,
       completedQuestions: unitCompletedQuestions,
-      progress: (unitCompleted / unitTotal) * 100,
+      progress,
     };
   });
 
@@ -105,7 +144,7 @@ export function calculateStudyStats(
     totalConcepts,
     totalQuestions,
     totalItems,
-    examDate: examDay,
+    examDate: examDayStart,
     daysRemaining,
     dailyTarget,
     completedConcepts,

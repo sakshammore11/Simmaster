@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Upload, X, Check, Plus } from "lucide-react";
+import { Upload, X, Check, Plus, AlertCircle } from "lucide-react";
 
 interface PhotoUploadProps {
   itemId: string;
@@ -10,24 +10,69 @@ interface PhotoUploadProps {
   photos: string[];
 }
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_PHOTOS = 10;
+const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+
 export default function PhotoUpload({ itemId, onPhotoUploaded, onPhotoRemoved, photos }: PhotoUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
+  const [error, setError] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = (file: File) => {
-    if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const result = e.target?.result as string;
-        onPhotoUploaded(result);
-      };
-      reader.readAsDataURL(file);
+    setError("");
+    
+    // Validate file exists
+    if (!file) {
+      setError("No file selected");
+      return;
     }
+
+    // Validate file type
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      setError("Invalid file type. Please upload JPEG, PNG, WebP, or GIF images.");
+      return;
+    }
+
+    // Validate file size
+    if (file.size > MAX_FILE_SIZE) {
+      setError(`File too large. Maximum size is ${MAX_FILE_SIZE / 1024 / 1024}MB.`);
+      return;
+    }
+
+    // Validate photo limit
+    if (photos.length >= MAX_PHOTOS) {
+      setError(`Maximum ${MAX_PHOTOS} photos allowed.`);
+      return;
+    }
+
+    // Read file with error handling
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const result = e.target?.result;
+        if (typeof result === 'string' && result.startsWith('data:image')) {
+          onPhotoUploaded(result);
+          setError("");
+        } else {
+          setError("Failed to process image. Please try again.");
+        }
+      } catch (err) {
+        console.error('Error reading file:', err);
+        setError("Failed to read file. Please try again.");
+      }
+    };
+    reader.onerror = () => {
+      setError("Failed to read file. Please try again.");
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
+    setError("");
+    
     const file = e.dataTransfer.files[0];
     handleFileSelect(file);
   };
@@ -43,6 +88,7 @@ export default function PhotoUpload({ itemId, onPhotoUploaded, onPhotoRemoved, p
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError("");
     const file = e.target.files?.[0];
     if (file) {
       handleFileSelect(file);
@@ -50,15 +96,25 @@ export default function PhotoUpload({ itemId, onPhotoUploaded, onPhotoRemoved, p
   };
 
   const handleAddPhoto = () => {
+    setError("");
     fileInputRef.current?.click();
   };
 
   const handleRemovePhoto = (index: number) => {
+    setError("");
     onPhotoRemoved(index);
   };
 
   return (
     <div className="mt-6">
+      {/* Error Display */}
+      {error && (
+        <div className="mb-3 p-3 bg-red/20 border border-red/30 rounded-lg flex items-start gap-2">
+          <AlertCircle className="w-4 h-4 text-red-400 mt-0.5 flex-shrink-0" />
+          <p className="text-sm text-red-400">{error}</p>
+        </div>
+      )}
+
       {photos.length === 0 ? (
         <div
           className={`border-2 border-dashed rounded-xl p-6 text-center transition-all ${
@@ -76,7 +132,7 @@ export default function PhotoUpload({ itemId, onPhotoUploaded, onPhotoRemoved, p
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*"
+            accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
             onChange={handleInputChange}
             className="hidden"
           />

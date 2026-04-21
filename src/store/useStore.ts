@@ -1,6 +1,15 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+// Helper function to generate unique IDs
+const generateId = (): string => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // Fallback for environments without crypto.randomUUID
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+};
+
 interface Mistake {
   id: string;
   questionId: string;
@@ -102,7 +111,7 @@ export const useStore = create<StoreState>()(
           return {
             bookmarks: [
               ...state.bookmarks,
-              { ...bookmark, id: Date.now().toString(), timestamp: Date.now() },
+              { ...bookmark, id: generateId(), timestamp: Date.now() },
             ],
           };
         }),
@@ -121,7 +130,7 @@ export const useStore = create<StoreState>()(
         set((state) => ({
           mistakes: [
             ...state.mistakes,
-            { ...mistake, id: Date.now().toString(), timestamp: Date.now() },
+            { ...mistake, id: generateId(), timestamp: Date.now() },
           ],
         })),
       getWeakTopics: () => {
@@ -145,30 +154,68 @@ export const useStore = create<StoreState>()(
         timeLimit: 60,
       },
       startExam: (questions, timeLimit) =>
-        set({
-          examState: {
-            isActive: true,
-            questions,
-            currentQuestion: 0,
-            answers: {},
-            startTime: Date.now(),
-            timeLimit,
-          },
+        set(() => {
+          // Validate inputs
+          if (!Array.isArray(questions) || questions.length === 0) {
+            console.error('Invalid questions array provided to startExam');
+            return {}; // Return empty state to prevent update
+          }
+          if (typeof timeLimit !== 'number' || timeLimit <= 0) {
+            console.error('Invalid timeLimit provided to startExam');
+            return {}; // Return empty state to prevent update
+          }
+          
+          return {
+            examState: {
+              isActive: true,
+              questions,
+              currentQuestion: 0,
+              answers: {},
+              startTime: Date.now(),
+              timeLimit,
+            },
+          };
         }),
       submitAnswer: (questionId, answer) =>
-        set((state) => ({
-          examState: {
-            ...state.examState,
-            answers: { ...state.examState.answers, [questionId]: answer },
-          },
-        })),
+        set((state) => {
+          // Validate inputs
+          if (!questionId || typeof questionId !== 'string') {
+            console.error('Invalid questionId in submitAnswer');
+            return state;
+          }
+          if (answer === undefined || answer === null) {
+            console.error('Invalid answer in submitAnswer');
+            return state;
+          }
+          if (!state.examState.isActive) {
+            console.error('Cannot submit answer: exam not active');
+            return state;
+          }
+          
+          return {
+            examState: {
+              ...state.examState,
+              answers: { ...state.examState.answers, [questionId]: answer },
+            },
+          };
+        }),
       nextQuestion: () =>
-        set((state) => ({
-          examState: {
-            ...state.examState,
-            currentQuestion: Math.min(state.examState.currentQuestion + 1, state.examState.questions.length - 1),
-          },
-        })),
+        set((state) => {
+          if (!state.examState.isActive) {
+            console.error('Cannot go to next question: exam not active');
+            return state;
+          }
+          
+          const nextIndex = state.examState.currentQuestion + 1;
+          const maxIndex = Math.max(0, state.examState.questions.length - 1);
+          
+          return {
+            examState: {
+              ...state.examState,
+              currentQuestion: Math.min(nextIndex, maxIndex),
+            },
+          };
+        }),
       endExam: () =>
         set((state) => ({
           examState: { ...state.examState, isActive: false, endTime: Date.now() },
@@ -210,7 +257,14 @@ export const useStore = create<StoreState>()(
           conceptProgress: {
             ...state.conceptProgress,
             [conceptId]: {
-              ...state.conceptProgress[conceptId],
+              ...(state.conceptProgress[conceptId] || {
+                learned: false,
+                practiced: false,
+                lastAccessed: 0,
+                handwritten: false,
+                handwrittenPhotos: [],
+                videoWatched: false,
+              }),
               learned: true,
               lastAccessed: Date.now(),
             },
@@ -221,7 +275,14 @@ export const useStore = create<StoreState>()(
           conceptProgress: {
             ...state.conceptProgress,
             [conceptId]: {
-              ...state.conceptProgress[conceptId],
+              ...(state.conceptProgress[conceptId] || {
+                learned: false,
+                practiced: false,
+                lastAccessed: 0,
+                handwritten: false,
+                handwrittenPhotos: [],
+                videoWatched: false,
+              }),
               practiced: true,
               lastAccessed: Date.now(),
             },
@@ -236,29 +297,55 @@ export const useStore = create<StoreState>()(
         return { learned, total, practiced };
       },
       markHandwritten: (itemId, photo) =>
-        set((state) => ({
-          conceptProgress: {
-            ...state.conceptProgress,
-            [itemId]: {
-              ...state.conceptProgress[itemId],
-              handwritten: true,
-              handwrittenPhotos: [
-                ...(state.conceptProgress[itemId]?.handwrittenPhotos || []),
-                photo,
-              ],
-              lastAccessed: Date.now(),
+        set((state) => {
+          // Validate photo is a non-empty string
+          if (!photo || typeof photo !== 'string') {
+            console.error('Invalid photo data');
+            return state;
+          }
+          
+          const existing = state.conceptProgress[itemId] || {
+            learned: false,
+            practiced: false,
+            lastAccessed: 0,
+            handwritten: false,
+            handwrittenPhotos: [],
+            videoWatched: false,
+          };
+          
+          return {
+            conceptProgress: {
+              ...state.conceptProgress,
+              [itemId]: {
+                ...existing,
+                handwritten: true,
+                handwrittenPhotos: [
+                  ...(existing.handwrittenPhotos || []),
+                  photo,
+                ],
+                lastAccessed: Date.now(),
+              },
             },
-          },
-        })),
+          };
+        }),
       removeHandwrittenPhoto: (itemId, photoIndex) =>
         set((state) => {
-          const currentPhotos = state.conceptProgress[itemId]?.handwrittenPhotos || [];
+          const existing = state.conceptProgress[itemId];
+          if (!existing) return state;
+          
+          const currentPhotos = existing.handwrittenPhotos || [];
+          // Validate photoIndex bounds
+          if (photoIndex < 0 || photoIndex >= currentPhotos.length) {
+            console.error('Invalid photo index:', photoIndex);
+            return state;
+          }
+          
           const newPhotos = currentPhotos.filter((_, index) => index !== photoIndex);
           return {
             conceptProgress: {
               ...state.conceptProgress,
               [itemId]: {
-                ...state.conceptProgress[itemId],
+                ...existing,
                 handwrittenPhotos: newPhotos,
                 handwritten: newPhotos.length > 0,
               },
@@ -270,16 +357,27 @@ export const useStore = create<StoreState>()(
         return state.conceptProgress[itemId]?.handwritten || false;
       },
       markVideoWatched: (itemId) =>
-        set((state) => ({
-          conceptProgress: {
-            ...state.conceptProgress,
-            [itemId]: {
-              ...state.conceptProgress[itemId],
-              videoWatched: true,
-              lastAccessed: Date.now(),
+        set((state) => {
+          const existing = state.conceptProgress[itemId] || {
+            learned: false,
+            practiced: false,
+            lastAccessed: 0,
+            handwritten: false,
+            handwrittenPhotos: [],
+            videoWatched: false,
+          };
+          
+          return {
+            conceptProgress: {
+              ...state.conceptProgress,
+              [itemId]: {
+                ...existing,
+                videoWatched: true,
+                lastAccessed: Date.now(),
+              },
             },
-          },
-        })),
+          };
+        }),
       isVideoWatched: (itemId) => {
         const state = get();
         return state.conceptProgress[itemId]?.videoWatched || false;
@@ -296,6 +394,35 @@ export const useStore = create<StoreState>()(
     }),
     {
       name: "simmaster-storage",
+      onRehydrateStorage: () => (state) => {
+        try {
+          // Validate rehydrated state
+          if (!state) return;
+          
+          // Ensure conceptProgress exists and is valid
+          if (!state.conceptProgress || typeof state.conceptProgress !== 'object') {
+            state.conceptProgress = {};
+          }
+          
+          // Ensure arrays exist
+          if (!Array.isArray(state.bookmarks)) {
+            state.bookmarks = [];
+          }
+          if (!Array.isArray(state.mistakes)) {
+            state.mistakes = [];
+          }
+          
+          console.log('State rehydrated successfully');
+        } catch (error) {
+          console.error('Error rehydrating state:', error);
+          // Reset to defaults on error if state exists
+          if (state) {
+            state.bookmarks = [];
+            state.mistakes = [];
+            state.conceptProgress = {};
+          }
+        }
+      },
     }
   )
 );
