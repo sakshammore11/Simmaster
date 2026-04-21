@@ -5,6 +5,7 @@ import Link from "next/link";
 import { BookOpen, Calculator, Clock, Target, Lightbulb, AlertCircle, Search, Moon, Sun, Bookmark, ChevronRight, Play, ArrowRight, CheckCircle, Circle } from "lucide-react";
 import { useStore } from "@/store/useStore";
 import { syllabusData } from "@/data/syllabus";
+import DailyProgress from "@/components/DailyProgress";
 
 export default function Home() {
   const { darkMode, toggleDarkMode, setSearchQuery, mistakes, getWeakTopics, practiceProgress, conceptProgress, getOverallProgress } = useStore();
@@ -138,6 +139,9 @@ export default function Home() {
             </div>
           </Link>
         </div>
+
+        {/* Daily Progress / Study Planner */}
+        <DailyProgress conceptProgress={conceptProgress} />
 
         {/* Quick Progress */}
         {totalPracticeProgress.total > 0 && (
