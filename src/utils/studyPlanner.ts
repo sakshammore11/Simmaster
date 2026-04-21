@@ -30,7 +30,8 @@ export interface StudyStats {
 export function calculateStudyStats(
   conceptProgress: Record<string, { learned: boolean; practiced: boolean; lastAccessed: number; handwritten: boolean; videoWatched: boolean }>,
   examDate: Date = new Date("2026-05-05"),
-  customDailyTarget?: number
+  customDailyTarget?: number,
+  customCompletedToday?: number
 ): StudyStats {
   const totalConcepts = syllabusData.reduce((sum, unit) => sum + unit.concepts.length, 0);
   const totalQuestions = pyqData.length;
@@ -55,12 +56,14 @@ export function calculateStudyStats(
     return isQuestion && c.handwritten && c.videoWatched;
   }).length;
   
-  const completedToday = Object.values(conceptProgress).filter((c) => {
-    if (!c.lastAccessed) return false;
-    const lastAccess = new Date(c.lastAccessed);
-    lastAccess.setHours(0, 0, 0, 0);
-    return lastAccess.getTime() === today.getTime() && c.handwritten && c.videoWatched;
-  }).length;
+  const completedToday = customCompletedToday !== undefined 
+    ? customCompletedToday
+    : Object.values(conceptProgress).filter((c) => {
+        if (!c.lastAccessed) return false;
+        const lastAccess = new Date(c.lastAccessed);
+        lastAccess.setHours(0, 0, 0, 0);
+        return lastAccess.getTime() === today.getTime() && c.handwritten && c.videoWatched;
+      }).length;
 
   const remainingConcepts = totalConcepts - completedConcepts;
   const remainingQuestions = totalQuestions - completedQuestions;

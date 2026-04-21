@@ -10,10 +10,12 @@ interface DailyProgressProps {
 
 export default function DailyProgress({ conceptProgress }: DailyProgressProps) {
   const [customTarget, setCustomTarget] = useState<number | null>(null);
+  const [customCompletedToday, setCustomCompletedToday] = useState<number | null>(null);
   const [showUnitBreakdown, setShowUnitBreakdown] = useState(true);
   const [isEditingTarget, setIsEditingTarget] = useState(false);
+  const [isEditingCompleted, setIsEditingCompleted] = useState(false);
   
-  const stats = calculateStudyStats(conceptProgress, new Date("2026-05-05"), customTarget || undefined);
+  const stats = calculateStudyStats(conceptProgress, new Date("2026-05-05"), customTarget || undefined, customCompletedToday || undefined);
   const remainingToday = Math.max(0, stats.dailyTarget - stats.completedToday);
 
   return (
@@ -81,11 +83,31 @@ export default function DailyProgress({ conceptProgress }: DailyProgressProps) {
         </div>
 
         <div className="bg-white/5 rounded-xl p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <CheckCircle className="w-5 h-5 text-green-500" />
-            <span className="text-sm opacity-70">Completed Today</span>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-green-500" />
+              <span className="text-sm opacity-70">Completed Today</span>
+            </div>
+            <button
+              onClick={() => setIsEditingCompleted(!isEditingCompleted)}
+              className="p-1 rounded hover:bg-white/10 transition-colors"
+              title="Edit completed today"
+            >
+              <Edit2 className="w-4 h-4 opacity-50 hover:opacity-100" />
+            </button>
           </div>
-          <div className="text-3xl font-bold">{stats.completedToday}</div>
+          {isEditingCompleted ? (
+            <input
+              type="number"
+              value={customCompletedToday ?? stats.completedToday}
+              onChange={(e) => setCustomCompletedToday(parseInt(e.target.value) || 0)}
+              onBlur={() => setIsEditingCompleted(false)}
+              className="text-3xl font-bold bg-transparent border-b border-white/30 focus:border-orange outline-none w-20"
+              autoFocus
+            />
+          ) : (
+            <div className="text-3xl font-bold">{stats.completedToday}</div>
+          )}
           <div className="text-xs opacity-70">{remainingToday > 0 ? `${remainingToday} more needed` : "Target met!"}</div>
         </div>
 
