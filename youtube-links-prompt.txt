@@ -1,0 +1,24 @@
+I need working YouTube video links for the following Modeling and Simulation topics. Please search for and provide the best, most relevant YouTube video URLs for each topic. The videos should be educational, clear, and suitable for university-level students preparing for exams.
+
+Please provide the links in this exact format:
+
+Topic Name: https://www.youtube.com/watch?v=VIDEO_ID
+
+Here are the topics:
+
+UNIT 1 - Introduction to Modeling and Simulation:
+1. Queuing Systems
+
+UNIT 2 - Basic Probability and Statistics:
+2. Poisson Distribution
+3. Exponential Distribution
+
+UNIT 3 - Random Numbers and Random Variates:
+4. Linear Congruential Generator (LCG)
+5. Inverse Transform Method
+
+UNIT 4 - Input Modeling:
+6. Maximum Likelihood Estimation (MLE)
+7. AR(1) Model
+
+Please provide only working YouTube video links. Make sure the videos are from reputable educational channels and cover the topic comprehensively for exam preparation.
