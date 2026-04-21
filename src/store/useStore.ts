@@ -26,6 +26,7 @@ interface ConceptProgress {
   lastAccessed: number;
   handwritten: boolean;
   handwrittenPhotos: string[];
+  videoWatched: boolean;
 }
 
 interface ExamState {
@@ -73,6 +74,9 @@ interface StoreState {
   markHandwritten: (itemId: string, photo: string) => void;
   removeHandwrittenPhoto: (itemId: string, photoIndex: number) => void;
   isHandwritten: (itemId: string) => boolean;
+  markVideoWatched: (itemId: string) => void;
+  isVideoWatched: (itemId: string) => boolean;
+  isRequirementsMet: (itemId: string) => boolean;
   getOverallProgress: () => { learned: number; total: number; practiced: number };
 
   // Search
@@ -263,6 +267,25 @@ export const useStore = create<StoreState>()(
       isHandwritten: (itemId) => {
         const state = get();
         return state.conceptProgress[itemId]?.handwritten || false;
+      },
+      markVideoWatched: (itemId) =>
+        set((state) => ({
+          conceptProgress: {
+            ...state.conceptProgress,
+            [itemId]: {
+              ...state.conceptProgress[itemId],
+              videoWatched: true,
+            },
+          },
+        })),
+      isVideoWatched: (itemId) => {
+        const state = get();
+        return state.conceptProgress[itemId]?.videoWatched || false;
+      },
+      isRequirementsMet: (itemId) => {
+        const state = get();
+        const progress = state.conceptProgress[itemId];
+        return progress?.handwritten && progress?.videoWatched;
       },
 
       // Search

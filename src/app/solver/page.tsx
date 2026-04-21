@@ -6,10 +6,10 @@ import { ArrowLeft, Calculator, MessageCircle, ChevronDown, ChevronUp, Play, Max
 import { pyqData, type PYQ, type PYQStep } from "@/data/pyqs";
 import { explainNumerical } from "@/services/aiTutor";
 import { useStore } from "@/store/useStore";
-import PhotoUpload from "@/components/PhotoUpload";
+import LearningRequirements from "@/components/LearningRequirements";
 
 export default function SolverPage() {
-  const { addMistake, updatePracticeProgress, markHandwritten, removeHandwrittenPhoto, conceptProgress } = useStore();
+  const { addMistake, updatePracticeProgress, markHandwritten, removeHandwrittenPhoto, conceptProgress, markVideoWatched, isVideoWatched, isRequirementsMet } = useStore();
   const [selectedPYQ, setSelectedPYQ] = useState<PYQ | null>(null);
   const [expandedSteps, setExpandedSteps] = useState<Set<number>>(new Set());
   const [aiExplanation, setAiExplanation] = useState<string>("");
@@ -100,12 +100,16 @@ export default function SolverPage() {
               )}
             </div>
 
-            {/* Photo Upload Requirement */}
-            <PhotoUpload
+            {/* Learning Requirements - Strict Mode */}
+            <LearningRequirements
               itemId={selectedPYQ.id}
-              onPhotoUploaded={(photo) => markHandwritten(selectedPYQ.id, photo)}
-              onPhotoRemoved={(photoIndex) => removeHandwrittenPhoto(selectedPYQ.id, photoIndex)}
+              youtubeUrl={selectedPYQ.youtubeUrl}
+              onPhotoUploaded={(photo: string) => markHandwritten(selectedPYQ.id, photo)}
+              onPhotoRemoved={(photoIndex: number) => removeHandwrittenPhoto(selectedPYQ.id, photoIndex)}
               photos={conceptProgress[selectedPYQ.id]?.handwrittenPhotos || []}
+              isVideoWatched={isVideoWatched(selectedPYQ.id)}
+              onVideoWatched={() => markVideoWatched(selectedPYQ.id)}
+              requirementsMet={isRequirementsMet(selectedPYQ.id)}
             />
 
             {/* Step-by-Step Solution */}

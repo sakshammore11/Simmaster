@@ -5,10 +5,10 @@ import Link from "next/link";
 import { ArrowLeft, Clock, CheckCircle, XCircle, Play } from "lucide-react";
 import { pyqData, type PYQ } from "@/data/pyqs";
 import { useStore } from "@/store/useStore";
-import PhotoUpload from "@/components/PhotoUpload";
+import LearningRequirements from "@/components/LearningRequirements";
 
 export default function ExamPage() {
-  const { examState, startExam, submitAnswer, nextQuestion, endExam, resetExam, addMistake, markHandwritten, removeHandwrittenPhoto, conceptProgress } = useStore();
+  const { examState, startExam, submitAnswer, nextQuestion, endExam, resetExam, addMistake, markHandwritten, removeHandwrittenPhoto, conceptProgress, markVideoWatched, isVideoWatched, isRequirementsMet } = useStore();
   const [currentAnswer, setCurrentAnswer] = useState<string>("");
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
@@ -221,12 +221,16 @@ export default function ExamPage() {
               </div>
             )}
 
-            {/* Photo Upload Requirement */}
-            <PhotoUpload
+            {/* Learning Requirements - Strict Mode */}
+            <LearningRequirements
               itemId={currentPYQ.id}
-              onPhotoUploaded={(photo) => markHandwritten(currentPYQ.id, photo)}
-              onPhotoRemoved={(photoIndex) => removeHandwrittenPhoto(currentPYQ.id, photoIndex)}
+              youtubeUrl={currentPYQ.youtubeUrl}
+              onPhotoUploaded={(photo: string) => markHandwritten(currentPYQ.id, photo)}
+              onPhotoRemoved={(photoIndex: number) => removeHandwrittenPhoto(currentPYQ.id, photoIndex)}
               photos={conceptProgress[currentPYQ.id]?.handwrittenPhotos || []}
+              isVideoWatched={isVideoWatched(currentPYQ.id)}
+              onVideoWatched={() => markVideoWatched(currentPYQ.id)}
+              requirementsMet={isRequirementsMet(currentPYQ.id)}
             />
 
             <textarea

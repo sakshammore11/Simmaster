@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Lightbulb, RotateCw, Bookmark } from "lucide-react";
 import { syllabusData } from "@/data/syllabus";
 import { useStore } from "@/store/useStore";
-import PhotoUpload from "@/components/PhotoUpload";
+import LearningRequirements from "@/components/LearningRequirements";
 
 interface FormulaCard {
   id: string;
@@ -16,7 +16,7 @@ interface FormulaCard {
 }
 
 export default function FormulasPage() {
-  const { addBookmark, isBookmarked, removeBookmark, markHandwritten, removeHandwrittenPhoto, conceptProgress } = useStore();
+  const { addBookmark, isBookmarked, removeBookmark, markHandwritten, removeHandwrittenPhoto, conceptProgress, markVideoWatched, isVideoWatched, isRequirementsMet } = useStore();
   const [selectedUnit, setSelectedUnit] = useState<number>(0);
   const [flippedCard, setFlippedCard] = useState<string | null>(null);
 
@@ -170,12 +170,16 @@ export default function FormulasPage() {
                     </div>
                   </div>
                   
-                  {/* Photo Upload Requirement */}
-                  <PhotoUpload
+                  {/* Learning Requirements - Strict Mode */}
+                  <LearningRequirements
                     itemId={formula.id}
-                    onPhotoUploaded={(photo) => markHandwritten(formula.id, photo)}
-                    onPhotoRemoved={(photoIndex) => removeHandwrittenPhoto(formula.id, photoIndex)}
+                    youtubeUrl={undefined}
+                    onPhotoUploaded={(photo: string) => markHandwritten(formula.id, photo)}
+                    onPhotoRemoved={(photoIndex: number) => removeHandwrittenPhoto(formula.id, photoIndex)}
                     photos={conceptProgress[formula.id]?.handwrittenPhotos || []}
+                    isVideoWatched={isVideoWatched(formula.id)}
+                    onVideoWatched={() => markVideoWatched(formula.id)}
+                    requirementsMet={isRequirementsMet(formula.id)}
                   />
 
                   <div className="p-3 rounded-lg bg-black/5">

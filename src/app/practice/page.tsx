@@ -5,10 +5,10 @@ import Link from "next/link";
 import { ArrowLeft, Target, Filter } from "lucide-react";
 import { pyqData } from "@/data/pyqs";
 import { useStore } from "@/store/useStore";
-import PhotoUpload from "@/components/PhotoUpload";
+import LearningRequirements from "@/components/LearningRequirements";
 
 export default function PracticePage() {
-  const { updatePracticeProgress, practiceProgress, markConceptPracticed, markHandwritten, removeHandwrittenPhoto, conceptProgress } = useStore();
+  const { updatePracticeProgress, practiceProgress, markConceptPracticed, markHandwritten, removeHandwrittenPhoto, conceptProgress, markVideoWatched, isVideoWatched, isRequirementsMet } = useStore();
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("All");
   const [selectedUnit, setSelectedUnit] = useState<number>(0);
 
@@ -136,12 +136,16 @@ export default function PracticePage() {
                 <h3 className="text-lg font-semibold mb-2">{pyq.topic}</h3>
                 <p className="opacity-70 text-sm line-clamp-2 mb-4">{pyq.question}</p>
 
-                {/* Photo Upload Requirement */}
-                <PhotoUpload
+                {/* Learning Requirements - Strict Mode */}
+                <LearningRequirements
                   itemId={pyq.id}
-                  onPhotoUploaded={(photo) => markHandwritten(pyq.id, photo)}
-                  onPhotoRemoved={(photoIndex) => removeHandwrittenPhoto(pyq.id, photoIndex)}
+                  youtubeUrl={pyq.youtubeUrl}
+                  onPhotoUploaded={(photo: string) => markHandwritten(pyq.id, photo)}
+                  onPhotoRemoved={(photoIndex: number) => removeHandwrittenPhoto(pyq.id, photoIndex)}
                   photos={conceptProgress[pyq.id]?.handwrittenPhotos || []}
+                  isVideoWatched={isVideoWatched(pyq.id)}
+                  onVideoWatched={() => markVideoWatched(pyq.id)}
+                  requirementsMet={isRequirementsMet(pyq.id)}
                 />
 
                 <div className="flex gap-2">

@@ -6,10 +6,10 @@ import { ArrowLeft, Bookmark, MessageCircle, ChevronRight, Play, ChevronDown, Ca
 import { syllabusData, type Concept } from "@/data/syllabus";
 import { useStore } from "@/store/useStore";
 import { getAIExplanation } from "@/services/aiTutor";
-import PhotoUpload from "@/components/PhotoUpload";
+import LearningRequirements from "@/components/LearningRequirements";
 
 export default function LearnPage() {
-  const { addBookmark, isBookmarked, removeBookmark, markConceptLearned, markConceptPracticed, conceptProgress, markHandwritten, removeHandwrittenPhoto } = useStore();
+  const { addBookmark, isBookmarked, removeBookmark, markConceptLearned, markConceptPracticed, conceptProgress, markHandwritten, removeHandwrittenPhoto, markVideoWatched, isVideoWatched, isRequirementsMet } = useStore();
   const [selectedUnit, setSelectedUnit] = useState<number>(1);
   const [selectedConcept, setSelectedConcept] = useState<Concept | null>(null);
   const [aiExplanation, setAiExplanation] = useState<string>("");
@@ -114,12 +114,16 @@ export default function LearnPage() {
 
             <p className="text-lg opacity-90 mb-6 leading-relaxed">{selectedConcept.description}</p>
 
-            {/* Photo Upload Requirement */}
-            <PhotoUpload
+            {/* Learning Requirements - Strict Mode */}
+            <LearningRequirements
               itemId={selectedConcept.id}
-              onPhotoUploaded={(photo) => markHandwritten(selectedConcept.id, photo)}
-              onPhotoRemoved={(photoIndex) => removeHandwrittenPhoto(selectedConcept.id, photoIndex)}
+              youtubeUrl={selectedConcept.youtubeUrl}
+              onPhotoUploaded={(photo: string) => markHandwritten(selectedConcept.id, photo)}
+              onPhotoRemoved={(photoIndex: number) => removeHandwrittenPhoto(selectedConcept.id, photoIndex)}
               photos={conceptProgress[selectedConcept.id]?.handwrittenPhotos || []}
+              isVideoWatched={isVideoWatched(selectedConcept.id)}
+              onVideoWatched={() => markVideoWatched(selectedConcept.id)}
+              requirementsMet={isRequirementsMet(selectedConcept.id)}
             />
 
             {selectedConcept.formula && (
