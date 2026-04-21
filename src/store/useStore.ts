@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { fetchUserData, updateUserData, getUserId } from "@/lib/store-utils";
 
 // Helper function to generate unique IDs
 const generateId = (): string => {
@@ -91,11 +91,13 @@ interface StoreState {
   // Search
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+
+  // MongoDB Sync
+  syncFromDB: () => Promise<void>;
+  syncToDB: () => Promise<void>;
 }
 
-export const useStore = create<StoreState>()(
-  persist(
-    (set, get) => ({
+export const useStore = create<StoreState>((set, get) => ({
       // UI State
       darkMode: false,
       toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
@@ -391,38 +393,51 @@ export const useStore = create<StoreState>()(
       // Search
       searchQuery: "",
       setSearchQuery: (query) => set({ searchQuery: query }),
-    }),
-    {
-      name: "simmaster-storage",
-      onRehydrateStorage: () => (state) => {
+
+      // Sync functions
+      syncFromDB: async () => {
         try {
-          // Validate rehydrated state
-          if (!state) return;
-          
-          // Ensure conceptProgress exists and is valid
-          if (!state.conceptProgress || typeof state.conceptProgress !== 'object') {
-            state.conceptProgress = {};
+          const userId = getUserId();
+          const data = await fetchUserData(userId);
+          if (data) {
+            set({
+              bookmarks: data.bookmarks || [],
+              mistakes: data.mistakes || [],
+              examState: data.examState || {
+                isActive: false,
+                questions: [],
+                currentQuestion: 0,
+                answers: {},
+                startTime: 0,
+                timeLimit: 60,
+              },
+              practiceProgress: data.practiceProgress || {},
+              conceptProgress: data.conceptProgress || {},
+              darkMode: data.darkMode || false,
+              searchQuery: data.searchQuery || "",
+            });
           }
-          
-          // Ensure arrays exist
-          if (!Array.isArray(state.bookmarks)) {
-            state.bookmarks = [];
-          }
-          if (!Array.isArray(state.mistakes)) {
-            state.mistakes = [];
-          }
-          
-          console.log('State rehydrated successfully');
         } catch (error) {
-          console.error('Error rehydrating state:', error);
-          // Reset to defaults on error if state exists
-          if (state) {
-            state.bookmarks = [];
-            state.mistakes = [];
-            state.conceptProgress = {};
-          }
+          console.error('Error syncing from DB:', error);
         }
       },
-    }
-  )
+
+      syncToDB: async () => {
+        try {
+          const state = get();
+          const userId = getUserId();
+          await updateUserData(userId, {
+            bookmarks: state.bookmarks,
+            mistakes: state.mistakes,
+            examState: state.examState,
+            practiceProgress: state.practiceProgress,
+            conceptProgress: state.conceptProgress,
+            darkMode: state.darkMode,
+            searchQuery: state.searchQuery,
+          });
+        } catch (error) {
+          console.error('Error syncing to DB:', error);
+        }
+      },
+    })
 );
