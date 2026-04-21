@@ -2,18 +2,20 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Calculator, MessageCircle, ChevronDown, ChevronUp, Play, Maximize2, Minimize2, ChevronRight } from "lucide-react";
+import { ArrowLeft, Calculator, MessageCircle, ChevronDown, ChevronUp, Play, Maximize2, Minimize2, ChevronRight, Baby, GraduationCap } from "lucide-react";
 import { pyqData, type PYQ, type PYQStep } from "@/data/pyqs";
 import { explainNumerical } from "@/services/aiTutor";
 import { useStore } from "@/store/useStore";
+import PhotoUpload from "@/components/PhotoUpload";
 
 export default function SolverPage() {
-  const { addMistake, updatePracticeProgress } = useStore();
+  const { addMistake, updatePracticeProgress, markHandwritten, isHandwritten } = useStore();
   const [selectedPYQ, setSelectedPYQ] = useState<PYQ | null>(null);
   const [expandedSteps, setExpandedSteps] = useState<Set<number>>(new Set());
   const [aiExplanation, setAiExplanation] = useState<string>("");
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
+  const [simpleMode, setSimpleMode] = useState(false);
 
   const numericalPYQs = pyqData.filter((pyq) => pyq.type === "numerical");
 
@@ -33,7 +35,7 @@ export default function SolverPage() {
     setIsLoadingAI(true);
     setAiExplanation("");
     try {
-      const explanation = await explainNumerical(pyq.question);
+      const explanation = await explainNumerical(pyq.question, simpleMode);
       setAiExplanation(explanation);
     } catch (error) {
       setAiExplanation("Sorry, I couldn't get an explanation right now. Please try again.");
@@ -97,6 +99,13 @@ export default function SolverPage() {
                 </pre>
               )}
             </div>
+
+            {/* Photo Upload Requirement */}
+            <PhotoUpload
+              itemId={selectedPYQ.id}
+              onPhotoUploaded={(photo) => markHandwritten(selectedPYQ.id, photo)}
+              isUploaded={isHandwritten(selectedPYQ.id)}
+            />
 
             {/* Step-by-Step Solution */}
             {selectedPYQ.steps && (
@@ -172,6 +181,37 @@ export default function SolverPage() {
                 <MessageCircle className="w-4 h-4" />
                 Ask AI Tutor
               </h3>
+              
+              {/* Simple Mode Toggle */}
+              <div className="flex items-center gap-3 mb-4 p-3 rounded-lg bg-white/5">
+                <button
+                  onClick={() => setSimpleMode(!simpleMode)}
+                  className={`relative w-12 h-6 rounded-full transition-colors ${
+                    simpleMode ? 'bg-orange' : 'bg-gray-600'
+                  }`}
+                  aria-label={simpleMode ? "Disable simple mode" : "Enable simple mode"}
+                >
+                  <div
+                    className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${
+                      simpleMode ? 'translate-x-6' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+                <div className="flex items-center gap-2">
+                  {simpleMode ? (
+                    <>
+                      <Baby className="w-4 h-4 text-orange" />
+                      <span className="text-sm">Simple Mode (5-year-old explanation)</span>
+                    </>
+                  ) : (
+                    <>
+                      <GraduationCap className="w-4 h-4 text-ocean" />
+                      <span className="text-sm">Standard Mode (exam-focused)</span>
+                    </>
+                  )}
+                </div>
+              </div>
+
               <button
                 onClick={() => handleAskAI(selectedPYQ)}
                 disabled={isLoadingAI}

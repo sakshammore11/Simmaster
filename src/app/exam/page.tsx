@@ -5,9 +5,10 @@ import Link from "next/link";
 import { ArrowLeft, Clock, CheckCircle, XCircle, Play } from "lucide-react";
 import { pyqData, type PYQ } from "@/data/pyqs";
 import { useStore } from "@/store/useStore";
+import PhotoUpload from "@/components/PhotoUpload";
 
 export default function ExamPage() {
-  const { examState, startExam, submitAnswer, nextQuestion, endExam, resetExam, addMistake } = useStore();
+  const { examState, startExam, submitAnswer, nextQuestion, endExam, resetExam, addMistake, markHandwritten, isHandwritten } = useStore();
   const [currentAnswer, setCurrentAnswer] = useState<string>("");
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
@@ -219,6 +220,13 @@ export default function ExamPage() {
                 <pre className="text-sm overflow-x-auto">{JSON.stringify(currentPYQ.data, null, 2)}</pre>
               </div>
             )}
+
+            {/* Photo Upload Requirement */}
+            <PhotoUpload
+              itemId={currentPYQ.id}
+              onPhotoUploaded={(photo) => markHandwritten(currentPYQ.id, photo)}
+              isUploaded={isHandwritten(currentPYQ.id)}
+            />
 
             <textarea
               value={currentAnswer}

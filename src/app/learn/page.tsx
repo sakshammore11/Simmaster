@@ -2,19 +2,21 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Bookmark, MessageCircle, ChevronRight, Play, ChevronDown, Calculator } from "lucide-react";
+import { ArrowLeft, Bookmark, MessageCircle, ChevronRight, Play, ChevronDown, Calculator, Baby, GraduationCap } from "lucide-react";
 import { syllabusData, type Concept } from "@/data/syllabus";
 import { useStore } from "@/store/useStore";
 import { getAIExplanation } from "@/services/aiTutor";
+import PhotoUpload from "@/components/PhotoUpload";
 
 export default function LearnPage() {
-  const { addBookmark, isBookmarked, removeBookmark } = useStore();
+  const { addBookmark, isBookmarked, removeBookmark, markConceptLearned, markConceptPracticed, conceptProgress, markHandwritten, isHandwritten } = useStore();
   const [selectedUnit, setSelectedUnit] = useState<number>(1);
   const [selectedConcept, setSelectedConcept] = useState<Concept | null>(null);
   const [aiExplanation, setAiExplanation] = useState<string>("");
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [visibleCount, setVisibleCount] = useState(5);
   const [showAll, setShowAll] = useState(false);
+  const [simpleMode, setSimpleMode] = useState(false);
 
   const currentUnit = syllabusData.find((u) => u.id === selectedUnit);
 
@@ -35,7 +37,7 @@ export default function LearnPage() {
     setIsLoadingAI(true);
     setAiExplanation("");
     try {
-      const explanation = await getAIExplanation(concept.title, concept.description);
+      const explanation = await getAIExplanation(concept.title, concept.description, simpleMode);
       setAiExplanation(explanation);
     } catch (error) {
       setAiExplanation("Sorry, I couldn't get an explanation right now. Please try again.");
@@ -44,6 +46,11 @@ export default function LearnPage() {
   };
 
   if (selectedConcept) {
+    // Mark concept as learned when selected
+    if (!conceptProgress[selectedConcept.id]?.learned) {
+      markConceptLearned(selectedConcept.id);
+    }
+
     return (
       <div className="min-h-screen px-4 py-8">
         <div className="max-w-4xl mx-auto">
@@ -89,7 +96,30 @@ export default function LearnPage() {
               </div>
             )}
 
+            {/* Progress indicator */}
+            <div className="flex items-center gap-4 mb-4">
+              <div className="flex items-center gap-2">
+                <div className={`w-3 h-3 rounded-full ${conceptProgress[selectedConcept.id]?.learned ? 'bg-green-500' : 'bg-gray-500'}`}></div>
+                <span className="text-sm opacity-70">
+                  {conceptProgress[selectedConcept.id]?.learned ? 'Learned' : 'Not learned'}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className={`w-3 h-3 rounded-full ${conceptProgress[selectedConcept.id]?.practiced ? 'bg-green-500' : 'bg-gray-500'}`}></div>
+                <span className="text-sm opacity-70">
+                  {conceptProgress[selectedConcept.id]?.practiced ? 'Practiced' : 'Not practiced'}
+                </span>
+              </div>
+            </div>
+
             <p className="text-lg opacity-90 mb-6 leading-relaxed">{selectedConcept.description}</p>
+
+            {/* Photo Upload Requirement */}
+            <PhotoUpload
+              itemId={selectedConcept.id}
+              onPhotoUploaded={(photo) => markHandwritten(selectedConcept.id, photo)}
+              isUploaded={isHandwritten(selectedConcept.id)}
+            />
 
             {selectedConcept.formula && (
               <div className="glass p-4 mb-4">
@@ -107,6 +137,37 @@ export default function LearnPage() {
 
             <div className="glass p-4 mb-6">
               <h3 className="font-semibold mb-3">Ask AI Tutor</h3>
+              
+              {/* Simple Mode Toggle */}
+              <div className="flex items-center gap-3 mb-4 p-3 rounded-lg bg-white/5">
+                <button
+                  onClick={() => setSimpleMode(!simpleMode)}
+                  className={`relative w-12 h-6 rounded-full transition-colors ${
+                    simpleMode ? 'bg-orange' : 'bg-gray-600'
+                  }`}
+                  aria-label={simpleMode ? "Disable simple mode" : "Enable simple mode"}
+                >
+                  <div
+                    className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-transform ${
+                      simpleMode ? 'translate-x-6' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+                <div className="flex items-center gap-2">
+                  {simpleMode ? (
+                    <>
+                      <Baby className="w-4 h-4 text-orange" />
+                      <span className="text-sm">Simple Mode (5-year-old explanation)</span>
+                    </>
+                  ) : (
+                    <>
+                      <GraduationCap className="w-4 h-4 text-ocean" />
+                      <span className="text-sm">Standard Mode (exam-focused)</span>
+                    </>
+                  )}
+                </div>
+              </div>
+
               <button
                 onClick={() => handleAskAI(selectedConcept)}
                 disabled={isLoadingAI}

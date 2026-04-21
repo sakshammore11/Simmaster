@@ -20,6 +20,14 @@ interface Bookmark {
   timestamp: number;
 }
 
+interface ConceptProgress {
+  learned: boolean;
+  practiced: boolean;
+  lastAccessed: number;
+  handwritten: boolean;
+  handwrittenPhoto?: string;
+}
+
 interface ExamState {
   isActive: boolean;
   questions: string[];
@@ -57,6 +65,14 @@ interface StoreState {
   // Practice Progress
   practiceProgress: Record<string, { correct: number; total: number }>;
   updatePracticeProgress: (topic: string, correct: boolean) => void;
+
+  // Concept Progress
+  conceptProgress: Record<string, ConceptProgress>;
+  markConceptLearned: (conceptId: string) => void;
+  markConceptPracticed: (conceptId: string) => void;
+  markHandwritten: (itemId: string, photo: string) => void;
+  isHandwritten: (itemId: string) => boolean;
+  getOverallProgress: () => { learned: number; total: number; practiced: number };
 
   // Search
   searchQuery: string;
@@ -181,6 +197,54 @@ export const useStore = create<StoreState>()(
             },
           };
         }),
+
+      // Concept Progress
+      conceptProgress: {},
+      markConceptLearned: (conceptId) =>
+        set((state) => ({
+          conceptProgress: {
+            ...state.conceptProgress,
+            [conceptId]: {
+              ...state.conceptProgress[conceptId],
+              learned: true,
+              lastAccessed: Date.now(),
+            },
+          },
+        })),
+      markConceptPracticed: (conceptId) =>
+        set((state) => ({
+          conceptProgress: {
+            ...state.conceptProgress,
+            [conceptId]: {
+              ...state.conceptProgress[conceptId],
+              practiced: true,
+              lastAccessed: Date.now(),
+            },
+          },
+        })),
+      getOverallProgress: () => {
+        const state = get();
+        const concepts = Object.values(state.conceptProgress);
+        const learned = concepts.filter((c) => c.learned).length;
+        const total = concepts.length;
+        const practiced = concepts.filter((c) => c.practiced).length;
+        return { learned, total, practiced };
+      },
+      markHandwritten: (itemId, photo) =>
+        set((state) => ({
+          conceptProgress: {
+            ...state.conceptProgress,
+            [itemId]: {
+              ...state.conceptProgress[itemId],
+              handwritten: true,
+              handwrittenPhoto: photo,
+            },
+          },
+        })),
+      isHandwritten: (itemId) => {
+        const state = get();
+        return state.conceptProgress[itemId]?.handwritten || false;
+      },
 
       // Search
       searchQuery: "",

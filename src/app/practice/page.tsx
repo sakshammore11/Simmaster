@@ -5,9 +5,10 @@ import Link from "next/link";
 import { ArrowLeft, Target, Filter } from "lucide-react";
 import { pyqData } from "@/data/pyqs";
 import { useStore } from "@/store/useStore";
+import PhotoUpload from "@/components/PhotoUpload";
 
 export default function PracticePage() {
-  const { updatePracticeProgress, practiceProgress } = useStore();
+  const { updatePracticeProgress, practiceProgress, markConceptPracticed, markHandwritten, isHandwritten } = useStore();
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("All");
   const [selectedUnit, setSelectedUnit] = useState<number>(0);
 
@@ -135,6 +136,13 @@ export default function PracticePage() {
                 <h3 className="text-lg font-semibold mb-2">{pyq.topic}</h3>
                 <p className="opacity-70 text-sm line-clamp-2 mb-4">{pyq.question}</p>
 
+                {/* Photo Upload Requirement */}
+                <PhotoUpload
+                  itemId={pyq.id}
+                  onPhotoUploaded={(photo) => markHandwritten(pyq.id, photo)}
+                  isUploaded={isHandwritten(pyq.id)}
+                />
+
                 <div className="flex gap-2">
                   <Link
                     href={`/solver#${pyq.id}`}
@@ -145,6 +153,7 @@ export default function PracticePage() {
                   <button
                     onClick={() => {
                       updatePracticeProgress(pyq.topic, true);
+                      markConceptPracticed(pyq.topic);
                     }}
                     className="px-4 py-2 rounded-full bg-green/20 text-green hover:bg-green/30 transition-colors text-sm"
                   >
@@ -153,6 +162,7 @@ export default function PracticePage() {
                   <button
                     onClick={() => {
                       updatePracticeProgress(pyq.topic, false);
+                      markConceptPracticed(pyq.topic);
                     }}
                     className="px-4 py-2 rounded-full bg-red/20 text-red hover:bg-red/30 transition-colors text-sm"
                   >

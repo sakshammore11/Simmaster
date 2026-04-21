@@ -49,17 +49,27 @@ export async function openChatGPT(prompt: string): Promise<{ success: boolean; m
   return copyResult;
 }
 
-export async function getAIExplanation(query: string, context?: string): Promise<string> {
+export async function getAIExplanation(query: string, context?: string, simpleMode: boolean = false): Promise<string> {
   // Build the prompt for ChatGPT
-  const prompt = `You are an expert tutor for Modeling and Simulation course (TY IT, Mumbai University).
+  const basePrompt = `You are an expert tutor for Modeling and Simulation course (TY IT, Mumbai University).`;
 
-Keep answers concise and exam-focused. Focus on key formulas, steps, and exam-relevant explanations. Avoid unnecessary theory.
+  const modePrompt = simpleMode
+    ? `Explain this concept in TWO WAYS:
+1. ORIGINAL SOLUTION: Give the proper, exam-focused explanation with formulas, steps, and technical details. This is what you'd write in an exam.
+2. 5-YEAR-OLD EXPLANATION: Explain the same concept using simple analogies, everyday examples, and very basic language. Like explaining to a child who has never seen this before.
+
+Use headings to separate the two explanations clearly.`
+    : `Keep answers concise and exam-focused. Focus on key formulas, steps, and exam-relevant explanations. Avoid unnecessary theory.`;
+
+  const prompt = `${basePrompt}
+
+${modePrompt}
 
 Context: ${context || "Modeling and Simulation syllabus"}
 
 Query: ${query}
 
-Please explain this concept clearly for exam preparation.`;
+Please provide the explanation.`;
 
   // Open ChatGPT with the prompt
   const result = await openChatGPT(prompt);
@@ -84,22 +94,32 @@ function getFallbackExplanation(query: string): string {
   return "I'm having trouble connecting to the AI service. Here's a general approach: For this topic, focus on understanding the key formula, knowing when to apply it, and practicing with numerical examples. Check the concept explanations in the app for detailed information.";
 }
 
-export async function explainNumerical(question: string): Promise<string> {
+export async function explainNumerical(question: string, simpleMode: boolean = false): Promise<string> {
   // Build the prompt for ChatGPT
-  const prompt = `You are an expert tutor for Modeling and Simulation numerical problems.
+  const basePrompt = `You are an expert tutor for Modeling and Simulation numerical problems.`;
 
-Explain this problem step-by-step in exam format:
+  const modePrompt = simpleMode
+    ? `Explain this problem in TWO WAYS:
+1. ORIGINAL SOLUTION: Step-by-step in exam format - Identify distribution, state formula, show substitution, calculate, state final answer.
+2. 5-YEAR-OLD EXPLANATION: Explain what's happening using simple analogies and everyday language. Like explaining a math problem to a child.
+
+Use headings to separate the two explanations clearly.`
+    : `Explain this problem step-by-step in exam format:
 1. Identify the distribution/concept
 2. State the relevant formula
 3. Show substitution of values
 4. Calculate the result
 5. State the final answer clearly
 
-Keep it concise and match exam answer writing style.
+Keep it concise and match exam answer writing style.`;
+
+  const prompt = `${basePrompt}
+
+${modePrompt}
 
 Question: ${question}
 
-Please provide a step-by-step solution.`;
+Please provide the solution.`;
 
   // Open ChatGPT with the prompt
   const result = await openChatGPT(prompt);

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, Lightbulb, RotateCw, Bookmark } from "lucide-react";
 import { syllabusData } from "@/data/syllabus";
 import { useStore } from "@/store/useStore";
+import PhotoUpload from "@/components/PhotoUpload";
 
 interface FormulaCard {
   id: string;
@@ -15,7 +16,7 @@ interface FormulaCard {
 }
 
 export default function FormulasPage() {
-  const { addBookmark, isBookmarked, removeBookmark } = useStore();
+  const { addBookmark, isBookmarked, removeBookmark, markHandwritten, isHandwritten } = useStore();
   const [selectedUnit, setSelectedUnit] = useState<number>(0);
   const [flippedCard, setFlippedCard] = useState<string | null>(null);
 
@@ -168,6 +169,14 @@ export default function FormulasPage() {
                       <code className="text-lg font-mono">{formula.formula}</code>
                     </div>
                   </div>
+                  
+                  {/* Photo Upload Requirement */}
+                  <PhotoUpload
+                    itemId={formula.id}
+                    onPhotoUploaded={(photo) => markHandwritten(formula.id, photo)}
+                    isUploaded={isHandwritten(formula.id)}
+                  />
+
                   <div className="p-3 rounded-lg bg-black/5">
                     <div className="flex items-center gap-2 mb-1">
                       <Lightbulb className="w-4 h-4 text-ocean" />
