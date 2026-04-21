@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { BookOpen, Calculator, Clock, Target, Lightbulb, AlertCircle, Search, Moon, Sun, Bookmark, ChevronRight, Play, ArrowRight, CheckCircle, Circle } from "lucide-react";
+import { BookOpen, Calculator, Clock, Target, Lightbulb, AlertCircle, Search, Moon, Sun, Bookmark, ChevronRight, Play, ArrowRight, CheckCircle, Circle, LogOut } from "lucide-react";
 import { useStore } from "@/store/useStore";
 import { syllabusData } from "@/data/syllabus";
 import DailyProgress from "@/components/DailyProgress";
 
 export default function Home() {
-  const { darkMode, toggleDarkMode, setSearchQuery, mistakes, getWeakTopics, practiceProgress, conceptProgress, getOverallProgress } = useStore();
+  const { darkMode, toggleDarkMode, setSearchQuery, mistakes, getWeakTopics, practiceProgress, conceptProgress, getOverallProgress, logout } = useStore();
   const [searchInput, setSearchInput] = useState("");
   const [showExplore, setShowExplore] = useState(false);
 
@@ -94,6 +94,13 @@ export default function Home() {
           </h1>
 
           <div className="flex items-center gap-2">
+            <button
+              onClick={logout}
+              className="p-2 rounded-full hover:bg-white/10 transition-colors"
+              title="Logout"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
             <button
               onClick={toggleDarkMode}
               className="p-2 rounded-full hover:bg-white/10 transition-colors"

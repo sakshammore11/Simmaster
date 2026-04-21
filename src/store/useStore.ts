@@ -95,6 +95,13 @@ interface StoreState {
   // MongoDB Sync
   syncFromDB: () => Promise<void>;
   syncToDB: () => Promise<void>;
+
+  // Authentication
+  isAuthenticated: boolean;
+  user: { userId: string; email: string } | null;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+  checkAuth: () => Promise<void>;
 }
 
 export const useStore = create<StoreState>((set, get) => ({
@@ -394,7 +401,7 @@ export const useStore = create<StoreState>((set, get) => ({
       searchQuery: "",
       setSearchQuery: (query) => set({ searchQuery: query }),
 
-      // Sync functions
+      // MongoDB Sync
       syncFromDB: async () => {
         try {
           const userId = getUserId();
@@ -437,6 +444,82 @@ export const useStore = create<StoreState>((set, get) => ({
           });
         } catch (error) {
           console.error('Error syncing to DB:', error);
+        }
+      },
+
+      // Authentication
+      isAuthenticated: false,
+      user: null,
+      login: async (email, password) => {
+        try {
+          const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+          });
+          
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.error || 'Login failed');
+          }
+          
+          const data = await response.json();
+          set({
+            isAuthenticated: true,
+            user: data.user,
+          });
+          
+          // Sync user data after login
+          get().syncFromDB();
+        } catch (error) {
+          console.error('Login error:', error);
+          throw error;
+        }
+      },
+      logout: async () => {
+        try {
+          await fetch('/api/auth/logout', { method: 'POST' });
+          set({
+            isAuthenticated: false,
+            user: null,
+            bookmarks: [],
+            mistakes: [],
+            examState: {
+              isActive: false,
+              questions: [],
+              currentQuestion: 0,
+              answers: {},
+              startTime: 0,
+              timeLimit: 60,
+            },
+            practiceProgress: {},
+            conceptProgress: {},
+          });
+        } catch (error) {
+          console.error('Logout error:', error);
+        }
+      },
+      checkAuth: async () => {
+        try {
+          const response = await fetch('/api/auth/me');
+          if (response.ok) {
+            const data = await response.json();
+            set({
+              isAuthenticated: true,
+              user: data.user,
+            });
+          } else {
+            set({
+              isAuthenticated: false,
+              user: null,
+            });
+          }
+        } catch (error) {
+          console.error('Auth check error:', error);
+          set({
+            isAuthenticated: false,
+            user: null,
+          });
         }
       },
     })

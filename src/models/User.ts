@@ -45,6 +45,8 @@ interface ExamState {
 
 interface IUser extends Document {
   userId: string;
+  email: string;
+  password: string;
   bookmarks: Bookmark[];
   mistakes: Mistake[];
   examState: ExamState;
@@ -102,6 +104,8 @@ const ExamStateSchema = new Schema<ExamState>({
 const UserSchema = new Schema<IUser>(
   {
     userId: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
     bookmarks: { type: [BookmarkSchema], default: [] },
     mistakes: { type: [MistakeSchema], default: [] },
     examState: { type: ExamStateSchema, default: {} },
