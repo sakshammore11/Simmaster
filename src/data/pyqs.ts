@@ -36,6 +36,7 @@ export const pyqData: PYQ[] = [
     difficulty: "Medium",
     type: "theoretical",
     answer: "Monte Carlo Simulation is a computational technique that uses random sampling to obtain numerical results. It relies on repeated random sampling to simulate the behavior of complex systems. Key steps: 1) Define problem domain, 2) Generate random inputs, 3) Perform deterministic computations, 4) Aggregate results. Applications: finance, physics, engineering, risk analysis.",
+    youtubeUrl: "https://www.youtube.com/watch?v=psOYFdx838E",
   },
   {
     id: "1-2",
@@ -46,6 +47,7 @@ export const pyqData: PYQ[] = [
     topic: "Event-Scheduling Simulation",
     difficulty: "PYQ Level",
     type: "numerical",
+    youtubeUrl: "https://www.youtube.com/watch?v=iBuAsF3Uul8",
     data: {
       interArrivalTime: [8, 6, 1, 8, 3, 8],
       serviceTime: [4, 1, 4, 3, 2, 4],
@@ -124,6 +126,7 @@ export const pyqData: PYQ[] = [
     topic: "Simulation Table",
     difficulty: "PYQ Level",
     type: "numerical",
+    youtubeUrl: "https://www.youtube.com/watch?v=hoY8otLgbOw",
     data: {
       customers: [
         { number: 1, interArrival: null, serviceTime: 2 },
@@ -178,6 +181,7 @@ export const pyqData: PYQ[] = [
     difficulty: "Medium",
     type: "theoretical",
     answer: "Covariance measures how two variables change together: Cov(X,Y) = E[(X-μX)(Y-μY)]. Positive: variables move together, Negative: move opposite, Zero: independent. Correlation normalizes covariance to [-1,1]: ρ = Cov(X,Y)/(σXσY). 1: perfect positive, -1: perfect negative, 0: no linear relationship.",
+    youtubeUrl: "https://www.youtube.com/watch?v=uW0TapQ6UQU",
   },
   {
     id: "2-2",
@@ -188,6 +192,7 @@ export const pyqData: PYQ[] = [
     topic: "Poisson Distribution",
     difficulty: "Medium",
     type: "numerical",
+    youtubeUrl: "https://www.youtube.com/watch?v=O-YhNpy7z3I",
     steps: [
       {
         step: 1,
@@ -289,7 +294,7 @@ export const pyqData: PYQ[] = [
     topic: "Exponential Variate Generation",
     difficulty: "Medium",
     type: "numerical",
-    youtubeUrl: "https://www.youtube.com/watch?v=QrcbgIMiVBg",
+    youtubeUrl: "https://www.youtube.com/watch?v=9ixzzPQWuAY",
     steps: [
       {
         step: 1,
@@ -326,6 +331,7 @@ export const pyqData: PYQ[] = [
     difficulty: "Medium",
     type: "theoretical",
     answer: "Steps for Kolmogorov-Smirnov Test for Uniformity: 1) Sort random numbers in ascending order. 2) Calculate empirical CDF: Fn(x) = i/n for i-th sorted value. 3) Calculate theoretical CDF: F(x) = x for Uniform(0,1). 4) Find D+ = max(Fn(xi) - F(xi)) and D- = max(F(xi) - Fn(xi-1)). 5) Test statistic D = max(D+, D-). 6) Compare D with critical value at significance level α. 7) If D ≤ critical value, accept uniformity.",
+    youtubeUrl: "https://www.youtube.com/watch?v=we4p332VoPQ",
   },
   {
     id: "3-4",
@@ -337,6 +343,7 @@ export const pyqData: PYQ[] = [
     difficulty: "Medium",
     type: "theoretical",
     answer: "Acceptance-Rejection Method generates random variates from complex distributions using a simpler proposal distribution. Steps: 1) Choose proposal distribution g(x) that is easy to sample from. 2) Find constant M such that f(x) ≤ M×g(x) for all x. 3) Generate X from g(x). 4) Generate U from Uniform(0,1). 5) If U ≤ f(X)/(M×g(X)), accept X; else reject and repeat. Used when inverse transform is difficult or unavailable.",
+    youtubeUrl: "https://www.youtube.com/watch?v=tTxfYh5dC6k",
   },
 
   // Additional Unit 1 Questions
@@ -350,6 +357,7 @@ export const pyqData: PYQ[] = [
     difficulty: "Medium",
     type: "theoretical",
     answer: "Discrete-event simulation: State changes occur at discrete points in time (e.g., bank queue, traffic light). Continuous simulation: State changes continuously over time (e.g., temperature change, fluid flow). Discrete uses event list, continuous uses differential equations.",
+    youtubeUrl: "https://www.youtube.com/watch?v=5vtJUu6JekM",
   },
   {
     id: "1-4",
@@ -360,6 +368,7 @@ export const pyqData: PYQ[] = [
     topic: "Queue Simulation",
     difficulty: "PYQ Level",
     type: "numerical",
+    youtubeUrl: "https://www.youtube.com/watch?v=DBmYYpxjqvM",
     data: { interArrival: [2, 4, 1, 5, 3], service: [3, 2, 4, 3, 2] },
     steps: [
       { step: 1, title: "Initialize", explanation: "Clock=0, server idle, queue empty.", calculation: "First arrival at time 2" },
@@ -378,6 +387,7 @@ export const pyqData: PYQ[] = [
     difficulty: "Medium",
     type: "theoretical",
     answer: "Advantages: Handles complex systems, no mathematical assumptions, visual output, what-if analysis. Disadvantages: Computationally expensive, approximation errors, requires validation, time-consuming to build.",
+    youtubeUrl: "https://www.youtube.com/watch?v=WQTFfOYmFmM",
   },
 
   // Additional Unit 2 Questions
@@ -390,6 +400,7 @@ export const pyqData: PYQ[] = [
     topic: "Poisson Distribution",
     difficulty: "Easy",
     type: "numerical",
+    youtubeUrl: "https://www.youtube.com/watch?v=m0o-585xwW0",
     steps: [
       { step: 1, title: "Identify distribution", explanation: "X ~ Poisson(λ=3)", formula: "P(X=k) = (λ^k e^(-λ))/k!" },
       { step: 2, title: "Substitute values", explanation: "k=2, λ=3", substitution: "P(X=2) = (3^2 e^(-3))/2!" },
@@ -405,6 +416,7 @@ export const pyqData: PYQ[] = [
     topic: "Exponential Distribution",
     difficulty: "Medium",
     type: "numerical",
+    youtubeUrl: "https://www.youtube.com/watch?v=J3KSjZFVbis",
     steps: [
       { step: 1, title: "Find λ", explanation: "Mean = 1/λ, so λ = 1/100 = 0.01", formula: "λ = 1/mean" },
       { step: 2, title: "Use survival function", explanation: "P(X > x) = e^(-λx)", formula: "P(X > x) = e^(-λx)" },
@@ -420,6 +432,7 @@ export const pyqData: PYQ[] = [
     topic: "Joint Distributions",
     difficulty: "Medium",
     type: "numerical",
+    youtubeUrl: "https://www.youtube.com/watch?v=gHBwEorlQOw",
     steps: [
       { step: 1, title: "Set up integral", explanation: "Marginal fX(x) = ∫ f(x,y) dy over y", formula: "fX(x) = ∫ f(x,y) dy" },
       { step: 2, title: "Determine limits", explanation: "For fixed x, y goes from x to 1", substitution: "fX(x) = ∫[x to 1] 2 dy" },
@@ -436,6 +449,7 @@ export const pyqData: PYQ[] = [
     difficulty: "Medium",
     type: "theoretical",
     answer: "Type I Error (α): Reject true null hypothesis (false positive). Example: Concluding model is invalid when it's actually valid. Type II Error (β): Fail to reject false null hypothesis (false negative). Example: Accepting invalid model as valid. Trade-off: reducing one increases the other.",
+    youtubeUrl: "https://www.youtube.com/watch?v=9yQm9F2_yIk",
   },
   {
     id: "2-7",
@@ -446,6 +460,7 @@ export const pyqData: PYQ[] = [
     topic: "Descriptive Statistics",
     difficulty: "Easy",
     type: "numerical",
+    youtubeUrl: "https://www.youtube.com/watch?v=1dGZvM18Lt0",
     data: { values: [5, 8, 12, 15, 20] },
     steps: [
       { step: 1, title: "Calculate mean", explanation: "μ = Σx/n", formula: "μ = Σx/n", calculation: "μ = (5+8+12+15+20)/5 = 60/5 = 12" },
@@ -464,6 +479,7 @@ export const pyqData: PYQ[] = [
     topic: "K-S Test",
     difficulty: "PYQ Level",
     type: "numerical",
+    youtubeUrl: "https://www.youtube.com/watch?v=IvVYz1wQ0Bw",
     data: { numbers: [0.12, 0.45, 0.78, 0.23, 0.56] },
     steps: [
       { step: 1, title: "Sort numbers", explanation: "Arrange in ascending order", calculation: "Sorted: 0.12, 0.23, 0.45, 0.56, 0.78" },
@@ -482,6 +498,7 @@ export const pyqData: PYQ[] = [
     topic: "LCG Mixed",
     difficulty: "Medium",
     type: "numerical",
+    youtubeUrl: "https://www.youtube.com/watch?v=LUusa5Mhx_g",
     steps: [
       { step: 1, title: "Apply formula", explanation: "Xn+1 = (aXn + c) mod m", formula: "Xn+1 = (aXn + c) mod m", substitution: "a=5, c=1, m=16, X0=3" },
       { step: 2, title: "Generate sequence", explanation: "Iterate the formula", calculation: "X1 = (5×3+1) mod 16 = 16 mod 16 = 0. X2 = (5×0+1) mod 16 = 1. X3 = (5×1+1) mod 16 = 6. X4 = (5×6+1) mod 16 = 31 mod 16 = 15. X5 = (5×15+1) mod 16 = 76 mod 16 = 12.", finalAnswer: "Sequence: 3, 0, 1, 6, 15, 12, ..." },
@@ -497,6 +514,7 @@ export const pyqData: PYQ[] = [
     difficulty: "Medium",
     type: "theoretical",
     answer: "Runs test checks independence of random numbers. A run is consecutive values above/below median. Too few or too many runs indicates non-randomness. Test statistic Z = (R - E(R))/σR where R = observed runs, E(R) = (2n1n2/n) + 1, σR = √(2n1n2(2n1n2-n)/n²(n-1)). Compare Z with standard normal critical value.",
+    youtubeUrl: "https://www.youtube.com/watch?v=7TXlY7D-4xQ",
   },
   {
     id: "3-8",
@@ -507,6 +525,7 @@ export const pyqData: PYQ[] = [
     topic: "Triangular Distribution",
     difficulty: "Medium",
     type: "numerical",
+    youtubeUrl: "https://www.youtube.com/watch?v=9-R-7l3Zqig",
     steps: [
       { step: 1, title: "Identify parameters", explanation: "Triangular(a,b,c) with a=0, b=4, c=2", formula: "For U ≤ (c-a)/(b-a): X = a + √(U(b-a)(c-a)). For U > (c-a)/(b-a): X = b - √((1-U)(b-a)(b-c))" },
       { step: 2, title: "Calculate threshold", explanation: "(c-a)/(b-a) = (2-0)/(4-0) = 0.5", calculation: "Threshold = 0.5" },
@@ -523,6 +542,7 @@ export const pyqData: PYQ[] = [
     difficulty: "Medium",
     type: "theoretical",
     answer: "Autocorrelation measures correlation between numbers separated by lag k. If numbers are independent, autocorrelation should be near zero. Significant autocorrelation indicates patterns or dependence. Test statistic: ρ(k) = Cov(Xn, Xn+k)/(σXn σXn+k). Used to verify independence of generated random numbers.",
+    youtubeUrl: "https://www.youtube.com/watch?v=DRY05tx5MTg",
   },
 
   // Additional Unit 4 Questions
@@ -535,6 +555,7 @@ export const pyqData: PYQ[] = [
     topic: "AR(1) Model",
     difficulty: "PYQ Level",
     type: "numerical",
+    youtubeUrl: "https://www.youtube.com/watch?v=_T1zrUsiCss",
     data: { values: [10, 12, 11, 14, 13, 15] },
     steps: [
       { step: 1, title: "Calculate mean", explanation: "μ = Σx/n", calculation: "μ = (10+12+11+14+13+15)/6 = 75/6 = 12.5" },
@@ -552,6 +573,7 @@ export const pyqData: PYQ[] = [
     difficulty: "Medium",
     type: "theoretical",
     answer: "AR(1): Autoregressive model for general data. Xt = μ + φ(Xt-1 - μ) + εt, εt ~ N(0,σ²). Stationary if |φ| < 1. EAR(1): Exponential AR(1) for positively correlated exponential data. Uses exponential distribution for innovation. Used for inter-arrival times with correlation.",
+    youtubeUrl: "https://www.youtube.com/watch?v=EL2dNWUoWSw",
   },
   {
     id: "4-5",
@@ -562,6 +584,7 @@ export const pyqData: PYQ[] = [
     topic: "Method of Moments",
     difficulty: "Medium",
     type: "numerical",
+    youtubeUrl: "https://www.youtube.com/watch?v=4GlC8I8xLnk",
     data: { values: [2, 5, 3, 8, 4, 7, 6, 9] },
     steps: [
       { step: 1, title: "Calculate sample mean", explanation: "μ̂ = x̄ = Σx/n", formula: "μ̂ = Σx/n", calculation: "μ̂ = (2+5+3+8+4+7+6+9)/8 = 44/8 = 5.5" },
@@ -578,6 +601,7 @@ export const pyqData: PYQ[] = [
     difficulty: "Medium",
     type: "theoretical",
     answer: "Input modeling steps: 1) Collect real-world data, 2) Identify potential distributions, 3) Estimate parameters using MLE or method of moments, 4) Test goodness-of-fit (K-S, Chi-square), 5) Validate with independent data. Critical for realistic simulation results.",
+    youtubeUrl: "https://www.youtube.com/watch?v=54l_o-4ygvA",
   },
 
   // Additional Unit 5 Questions
@@ -591,6 +615,7 @@ export const pyqData: PYQ[] = [
     difficulty: "Medium",
     type: "theoretical",
     answer: "Verification: Is the model implemented correctly? (debugging). Methods: code review, trace, animation, compare with analytical solution. Example: Check if queue simulation calculates waiting time correctly. Validation: Does the model represent reality? Methods: expert review, compare with real data, sensitivity analysis. Example: Compare simulated queue length with actual bank queue data.",
+    youtubeUrl: "https://www.youtube.com/watch?v=K2R6viFvMrU",
   },
   {
     id: "5-2",
@@ -602,6 +627,7 @@ export const pyqData: PYQ[] = [
     difficulty: "Medium",
     type: "theoretical",
     answer: "Initialization bias occurs when simulation output is affected by starting conditions not representing steady-state. Solutions: 1) Warm-up period - discard initial data, 2) Use representative initial conditions, 3) Replicate with different seeds, 4) Use batch means after warm-up. Critical for steady-state simulations.",
+    youtubeUrl: "https://www.youtube.com/watch?v=c0y2r5M1vck",
   },
   {
     id: "5-3",
@@ -613,6 +639,7 @@ export const pyqData: PYQ[] = [
     difficulty: "Medium",
     type: "theoretical",
     answer: "Replication: Run simulation multiple times with different seeds. Each run independent. Good for terminating simulations. Requires many runs. Batch means: One long run, divide into batches. Batches may be correlated. Good for steady-state simulations. Fewer runs but need to ensure independence.",
+    youtubeUrl: "https://www.youtube.com/watch?v=gXOLNThfDxY",
   },
   {
     id: "5-4",
@@ -624,6 +651,7 @@ export const pyqData: PYQ[] = [
     difficulty: "Medium",
     type: "theoretical",
     answer: "Confidence interval gives range for true mean with specified confidence. For n replications: CI = x̄ ± t(α/2,n-1) × s/√n where x̄ is sample mean, s is sample std dev, t is t-distribution value. 95% CI means 95% probability interval contains true mean. Used to quantify uncertainty in simulation results.",
+    youtubeUrl: "https://www.youtube.com/watch?v=tWGnQxMgu8A",
   },
 
   // Unit 4 PYQs
@@ -636,7 +664,7 @@ export const pyqData: PYQ[] = [
     topic: "Maximum Likelihood Estimation",
     difficulty: "PYQ Level",
     type: "numerical",
-    youtubeUrl: "https://www.youtube.com/watch?v=XepXtl9YKwc",
+    youtubeUrl: "https://www.youtube.com/watch?v=p3T-_LMrvBc",
     data: {
       failures: [7.319, 4.561, 5.287, 6.142, 0.971, 20.182, 18.152, 3.723, 14.584, 30.764, 10.496, 11.236, 45.855, 23.865],
     },
@@ -683,6 +711,7 @@ export const pyqData: PYQ[] = [
     topic: "AR(1) Model",
     difficulty: "PYQ Level",
     type: "numerical",
+    youtubeUrl: "https://www.youtube.com/watch?v=GY0r17HHriU",
     steps: [
       {
         step: 1,
@@ -715,6 +744,7 @@ export const pyqData: PYQ[] = [
     topic: "Chi-Square Goodness-of-Fit Test",
     difficulty: "PYQ Level",
     type: "numerical",
+    youtubeUrl: "https://www.youtube.com/watch?v=W09GxjTkWy4",
     steps: [
       {
         step: 1,

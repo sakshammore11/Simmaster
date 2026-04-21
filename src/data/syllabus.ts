@@ -30,6 +30,7 @@ export const syllabusData: Unit[] = [
         description: "System: set of interacting components. Model: representation of system. Simulation: experimenting with model over time. Classification: physical vs abstract, static vs dynamic, discrete vs continuous.",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        youtubeUrl: "https://www.youtube.com/watch?v=A93Pg0hjm8w",
       },
       {
         id: "1-2",
@@ -37,7 +38,7 @@ export const syllabusData: Unit[] = [
         description: "Kendall notation: A/B/c where A=arrival process, B=service time distribution, c=number of servers. Components: arrival process, service mechanism, queue discipline, system capacity.",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
-        youtubeUrl: "https://www.youtube.com/watch?v=6K2NCO8ufVY",
+        youtubeUrl: "https://www.youtube.com/watch?v=SqSUJ0UYWMQ",
       },
       {
         id: "1-3",
@@ -45,6 +46,7 @@ export const syllabusData: Unit[] = [
         description: "Queue characteristics: arrival pattern, service pattern, number of servers, queue capacity, queue discipline (FIFO, LIFO, priority, SIRO). Performance measures: waiting time, queue length, utilization.",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        youtubeUrl: "https://www.youtube.com/watch?v=Kw3OZBnuV2c",
       },
       {
         id: "1-4",
@@ -52,6 +54,7 @@ export const syllabusData: Unit[] = [
         description: "Manual simulation of M/M/1 queue. Track: arrival time, service start, departure time, waiting time, queue length. Event scheduling approach.",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        youtubeUrl: "https://www.youtube.com/watch?v=QppldN-t4pQ",
       },
       {
         id: "1-5",
@@ -59,6 +62,7 @@ export const syllabusData: Unit[] = [
         description: "Simulation of multi-server queue. Server selection policy: shortest queue, cyclic, random. Track server status, queue dynamics.",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        youtubeUrl: "https://www.youtube.com/watch?v=m97e3XzxVh4",
       },
       {
         id: "1-6",
@@ -66,21 +70,25 @@ export const syllabusData: Unit[] = [
         description: "(s,S) policy: order when inventory ≤ s, order up to S. Track: inventory level, order quantity, shortage, holding cost, ordering cost.",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        youtubeUrl: "https://www.youtube.com/watch?v=S1RybGPaqRg",
       },
       {
         id: "1-7",
         title: "Reliability Problem Simulation",
         description: "System reliability simulation: components with failure rates, redundancy, repair. Calculate system MTBF, availability.",
+        youtubeUrl: "https://www.youtube.com/watch?v=BQXnKpP2lrI",
       },
       {
         id: "1-8",
         title: "Hitting Target Simulation",
         description: "Monte Carlo simulation: random projectile hitting target. Track: hit/miss, distance from target, accuracy estimation.",
+        youtubeUrl: "https://www.youtube.com/watch?v=0I8n7QzmOlg",
       },
       {
         id: "1-9",
         title: "Lead Time Demand Simulation",
         description: "Simulate demand during lead time. Combine demand distribution with lead time distribution. Calculate stockout probability, safety stock.",
+        youtubeUrl: "https://www.youtube.com/watch?v=9iiv-93xK6I",
       },
       {
         id: "1-10",
@@ -88,6 +96,7 @@ export const syllabusData: Unit[] = [
         description: "Event scheduling: advance clock to next event. Process interaction: entities compete for resources. Activity scanning: check conditions at each event.",
         pyqTag: true,
         pyqYears: ["2023"],
+        youtubeUrl: "https://www.youtube.com/watch?v=Uc2Yfvh4sQI",
       },
       {
         id: "1-11",
@@ -95,21 +104,25 @@ export const syllabusData: Unit[] = [
         description: "Algorithm: 1) Set clock to next event time, 2) Execute event, 3) Schedule future events, 4) Repeat. Event list maintained in priority queue.",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        youtubeUrl: "https://www.youtube.com/watch?v=DBmYYpxjqvM",
       },
       {
         id: "1-12",
         title: "DES Organization and Terminology",
         description: "Entities, attributes, events, activities, delays, state variables, event list, clock, statistics. System state changes only at events.",
+        youtubeUrl: "https://www.youtube.com/watch?v=3yQVpIcs0zg",
       },
       {
         id: "1-13",
         title: "Manual Simulation: Single Channel",
         description: "Step-by-step manual simulation of single channel queue. Create event table, track state variables over time.",
+        youtubeUrl: "https://www.youtube.com/watch?v=PDlxnTk0HEg",
       },
       {
         id: "1-14",
         title: "Manual Simulation: Dump Truck Problem",
         description: "Classic simulation problem: trucks loading, weighing, traveling. Multiple resources, complex event sequences.",
+        youtubeUrl: "https://www.youtube.com/watch?v=vdRayrOZ8xg",
       },
       {
         id: "1-15",
@@ -117,11 +130,13 @@ export const syllabusData: Unit[] = [
         description: "10-step process: Problem formulation → Objectives → Model conceptualization → Data collection → Model translation → Verification → Validation → Experimental design → Production runs → Documentation",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        youtubeUrl: "https://www.youtube.com/watch?v=HLN2oBAhU4M",
       },
       {
         id: "1-16",
         title: "Simulation Languages and Packages",
         description: "Languages: SIMSCRIPT, GPSS, SLAM. Packages: Arena, Simul8, AnyLogic, MATLAB SimEvents. Selection criteria: learning curve, features, cost.",
+        youtubeUrl: "https://www.youtube.com/watch?v=9e0F4VtgoaQ",
       },
     ],
   },
@@ -139,6 +154,7 @@ export const syllabusData: Unit[] = [
         pyqYears: ["2023", "2024"],
         formula: "Cov(X,Y) = E[(X-μX)(Y-μY)]",
         whenToUse: "Use when measuring linear relationship between two variables",
+        youtubeUrl: "https://www.youtube.com/watch?v=3v9w79NhsfI",
       },
       {
         id: "2-2",
@@ -146,6 +162,7 @@ export const syllabusData: Unit[] = [
         description: "Single trial with two outcomes (success/failure). P(X=1)=p, P(X=0)=1-p. Foundation for other discrete distributions.",
         formula: "E[X]=p, Var(X)=p(1-p)",
         whenToUse: "Single trial with binary outcome",
+        youtubeUrl: "https://www.youtube.com/watch?v=bT1p5tJwn_0",
       },
       {
         id: "2-3",
@@ -153,6 +170,7 @@ export const syllabusData: Unit[] = [
         description: "Number of successes in n independent Bernoulli trials. P(X=k) = C(n,k) p^k (1-p)^(n-k).",
         formula: "E[X]=np, Var(X)=np(1-p)",
         whenToUse: "Fixed number of independent trials with binary outcomes",
+        youtubeUrl: "https://www.youtube.com/watch?v=3PWKQiLK41M",
       },
       {
         id: "2-4",
@@ -160,6 +178,7 @@ export const syllabusData: Unit[] = [
         description: "Number of trials until first success. P(X=k) = (1-p)^(k-1) p. Memoryless property.",
         formula: "E[X]=1/p, Var(X)=(1-p)/p²",
         whenToUse: "Waiting time until first success",
+        youtubeUrl: "https://www.youtube.com/watch?v=KbQaPd2io_k",
       },
       {
         id: "2-5",
@@ -169,7 +188,7 @@ export const syllabusData: Unit[] = [
         whenToUse: "Counting events in fixed time/space interval",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
-        youtubeUrl: "https://www.youtube.com/watch?v=3z-M6sbGIZ0",
+        youtubeUrl: "https://www.youtube.com/watch?v=jmqZG6roVqU",
       },
       {
         id: "2-6",
@@ -177,6 +196,7 @@ export const syllabusData: Unit[] = [
         description: "Equal probability over interval [a,b]. f(x) = 1/(b-a) for a≤x≤b. Simple distribution for bounded variables.",
         formula: "E[X]=(a+b)/2, Var(X)=(b-a)²/12",
         whenToUse: "When all outcomes in range equally likely",
+        youtubeUrl: "https://www.youtube.com/watch?v=UC-CBUSQXAo",
       },
       {
         id: "2-7",
@@ -186,7 +206,7 @@ export const syllabusData: Unit[] = [
         whenToUse: "Time between events, failure times",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
-        youtubeUrl: "https://www.youtube.com/watch?v=QrcbgIMiVBg",
+        youtubeUrl: "https://www.youtube.com/watch?v=8qZilAKQM6s",
       },
       {
         id: "2-8",
@@ -194,6 +214,7 @@ export const syllabusData: Unit[] = [
         description: "Bell-shaped distribution. f(x) = (1/σ√(2π)) e^(-(x-μ)²/(2σ²)). Central Limit Theorem foundation.",
         formula: "E[X]=μ, Var(X)=σ²",
         whenToUse: "Natural phenomena, sum of many independent variables",
+        youtubeUrl: "https://www.youtube.com/watch?v=YAlJCEDH2uY",
       },
       {
         id: "2-9",
@@ -201,6 +222,7 @@ export const syllabusData: Unit[] = [
         description: "Defined by minimum (a), mode (b), maximum (c). Used when limited data available. Simple alternative to beta distribution.",
         formula: "E[X]=(a+b+c)/3, Var(X)=(a²+b²+c²-ab-ac-bc)/18",
         whenToUse: "Limited data, expert opinion available",
+        youtubeUrl: "https://www.youtube.com/watch?v=TwvXhX3bJJM",
       },
       {
         id: "2-10",
@@ -208,16 +230,19 @@ export const syllabusData: Unit[] = [
         description: "Counting process with: independent increments, stationary increments, P(event in small interval) = λdt. Inter-arrival times are exponential with mean 1/λ.",
         pyqTag: true,
         pyqYears: ["2023"],
+        youtubeUrl: "https://www.youtube.com/watch?v=B1yh-R-DuQI",
       },
       {
         id: "2-11",
         title: "Empirical Distributions (Discrete)",
         description: "Distribution based on observed discrete data. PMF: P(X=xi) = frequency(xi)/n. Used when theoretical distribution doesn't fit.",
+        youtubeUrl: "https://www.youtube.com/watch?v=X87lzluILjU",
       },
       {
         id: "2-12",
         title: "Empirical Distributions (Continuous)",
         description: "Continuous version based on observed data. Use interpolation between data points. Empirical CDF: Fn(x) = (number of observations ≤ x)/n.",
+        youtubeUrl: "https://www.youtube.com/watch?v=x-0RlxTCX8U",
       },
     ],
   },
@@ -233,6 +258,7 @@ export const syllabusData: Unit[] = [
         description: "Uniformity (even distribution), independence (no correlation), long period (no repetition), reproducibility (same seed = same sequence), speed, portability.",
         pyqTag: true,
         pyqYears: ["2023"],
+        youtubeUrl: "https://www.youtube.com/watch?v=2KNi3nZP9Qk",
       },
       {
         id: "3-2",
@@ -250,6 +276,7 @@ export const syllabusData: Unit[] = [
         description: "Xn+1 = (aXn) mod m with c = 0. Period ≤ m-1. Requires careful parameter selection. Park-Miller: a=16807, m=2^31-1.",
         formula: "Xn+1 = (aXn) mod m",
         whenToUse: "Faster than mixed LCG, but shorter period",
+        youtubeUrl: "https://www.youtube.com/watch?v=VfcrhXII6Xs",
       },
       {
         id: "3-4",
@@ -257,6 +284,7 @@ export const syllabusData: Unit[] = [
         description: "Chi-square test to check uniformity of random numbers. Divide [0,1] into k intervals, compare observed vs expected frequencies.",
         formula: "χ² = Σ(Oi - Ei)²/Ei",
         whenToUse: "Testing uniformity of random numbers",
+        youtubeUrl: "https://www.youtube.com/watch?v=oe_qk31wGLY",
       },
       {
         id: "3-5",
@@ -264,6 +292,7 @@ export const syllabusData: Unit[] = [
         description: "Tests independence of random numbers. Runs up and down test, runs above/below mean test. Too few or too many runs indicates non-randomness.",
         pyqTag: true,
         pyqYears: ["2023"],
+        youtubeUrl: "https://www.youtube.com/watch?v=7TXlY7D-4xQ",
       },
       {
         id: "3-6",
@@ -271,6 +300,7 @@ export const syllabusData: Unit[] = [
         description: "Tests correlation between numbers separated by lag k. If numbers independent, autocorrelation should be near zero.",
         formula: "ρ(k) = Cov(Xn, Xn+k)/(σXn σXn+k)",
         whenToUse: "Testing independence of random numbers",
+        youtubeUrl: "https://www.youtube.com/watch?v=DRY05tx5MTg",
       },
       {
         id: "3-7",
@@ -280,7 +310,7 @@ export const syllabusData: Unit[] = [
         whenToUse: "When inverse CDF is available",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
-        youtubeUrl: "https://www.youtube.com/watch?v=1WB8PtKnaqU",
+        youtubeUrl: "https://www.youtube.com/watch?v=9ixzzPQWuAY",
       },
       {
         id: "3-8",
@@ -290,6 +320,7 @@ export const syllabusData: Unit[] = [
         whenToUse: "When inverse transform difficult",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        youtubeUrl: "https://www.youtube.com/watch?v=OXDqjdVVePY",
       },
       {
         id: "3-9",
@@ -299,6 +330,7 @@ export const syllabusData: Unit[] = [
         whenToUse: "Generating exponential random variates",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        youtubeUrl: "https://www.youtube.com/watch?v=l6vCalylPvQ",
       },
       {
         id: "3-10",
@@ -306,21 +338,25 @@ export const syllabusData: Unit[] = [
         description: "Transform standard uniform to [a,b]: X = a + (b-a)U where U~Uniform(0,1).",
         formula: "X = a + (b-a)U",
         whenToUse: "Generating uniform variates on [a,b]",
+        youtubeUrl: "https://www.youtube.com/watch?v=sat-4unRR_0",
       },
       {
         id: "3-11",
         title: "Generating Triangular Variates",
         description: "Using inverse transform method based on mode position. Two formulas depending on whether U ≤ (c-a)/(b-a).",
+        youtubeUrl: "https://www.youtube.com/watch?v=9-R-7l3Zqig",
       },
       {
         id: "3-12",
         title: "Generating Empirical Continuous Variates",
         description: "Use empirical CDF: generate U~Uniform(0,1), find x where Fn(x) = U. Interpolate between data points.",
+        youtubeUrl: "https://www.youtube.com/watch?v=fvQYJnFZ5OQ",
       },
       {
         id: "3-13",
         title: "Generating Empirical Discrete Variates",
         description: "Use empirical PMF: generate U~Uniform(0,1), select xi where cumulative probability ≥ U.",
+        youtubeUrl: "https://www.youtube.com/watch?v=J2U-x4sZAKQ",
       },
       {
         id: "3-14",
@@ -328,6 +364,7 @@ export const syllabusData: Unit[] = [
         description: "Using relationship with exponential inter-arrival times or direct method. Generate exponential inter-arrivals until sum > 1.",
         pyqTag: true,
         pyqYears: ["2023"],
+        youtubeUrl: "https://www.youtube.com/watch?v=fDZdrW5ZLJ8",
       },
     ],
   },
@@ -341,6 +378,7 @@ export const syllabusData: Unit[] = [
         id: "4-1",
         title: "Data Collection",
         description: "Gathering relevant data for input modeling. Considerations: sample size, data quality, representativeness, time frame.",
+        youtubeUrl: "https://www.youtube.com/watch?v=RncV52JOZ00",
       },
       {
         id: "4-2",
@@ -348,21 +386,25 @@ export const syllabusData: Unit[] = [
         description: "Using histograms to visualize data shape. Compare with theoretical distributions. Identify candidate distributions.",
         pyqTag: true,
         pyqYears: ["2023"],
+        youtubeUrl: "https://www.youtube.com/watch?v=YspoCxAcFR4",
       },
       {
         id: "4-3",
         title: "Histograms",
         description: "Visual representation of data distribution. Bar chart showing frequency of data in intervals. Helps identify distribution shape.",
+        youtubeUrl: "https://www.youtube.com/watch?v=YdbxIDvid1I",
       },
       {
         id: "4-4",
         title: "Selecting Family of Distributions",
         description: "Based on data characteristics: discrete vs continuous, bounded vs unbounded, symmetric vs skewed. Choose appropriate distribution family.",
+        youtubeUrl: "https://www.youtube.com/watch?v=zoCxa_ljk1M",
       },
       {
         id: "4-5",
         title: "Quantile-Quantile Plots",
         description: "Q-Q plot compares empirical quantiles with theoretical quantiles. If points fall on line, good fit. Visual goodness-of-fit assessment.",
+        youtubeUrl: "https://www.youtube.com/watch?v=RETZus4XBNM",
       },
       {
         id: "4-6",
@@ -372,7 +414,7 @@ export const syllabusData: Unit[] = [
         whenToUse: "Estimating distribution parameters",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
-        youtubeUrl: "https://www.youtube.com/watch?v=XepXtl9YKwc",
+        youtubeUrl: "https://www.youtube.com/watch?v=E5ZJqy40ydc",
       },
       {
         id: "4-7",
@@ -380,11 +422,13 @@ export const syllabusData: Unit[] = [
         description: "Calculate sample mean x̄ = Σxi/n and sample variance s² = Σ(xi-x̄)²/(n-1). Used for parameter estimation and goodness-of-fit.",
         formula: "x̄ = Σxi/n, s² = Σ(xi-x̄)²/(n-1)",
         whenToUse: "Basic statistical analysis of data",
+        youtubeUrl: "https://www.youtube.com/watch?v=pfYhwy3wN14",
       },
       {
         id: "4-8",
         title: "Suggested Estimators",
         description: "Recommended estimators for common distributions: Normal (x̄, s²), Exponential (1/x̄), Poisson (x̄), Uniform (min, max). MLE preferred when available.",
+        youtubeUrl: "https://www.youtube.com/watch?v=n3MDr4j38tw",
       },
       {
         id: "4-9",
@@ -392,6 +436,7 @@ export const syllabusData: Unit[] = [
         description: "Chi-square test, Kolmogorov-Smirnov test, Anderson-Darling test. Compare empirical vs theoretical distribution.",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        youtubeUrl: "https://www.youtube.com/watch?v=J7Br64BQ6_c",
       },
       {
         id: "4-10",
@@ -401,6 +446,7 @@ export const syllabusData: Unit[] = [
         whenToUse: "Testing if data fits theoretical distribution",
         pyqTag: true,
         pyqYears: ["2023"],
+        youtubeUrl: "https://www.youtube.com/watch?v=vrBBjvLVcFU",
       },
       {
         id: "4-11",
@@ -410,6 +456,7 @@ export const syllabusData: Unit[] = [
         whenToUse: "Testing goodness-of-fit for continuous distributions",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        youtubeUrl: "https://www.youtube.com/watch?v=bPM0JDbO_xI",
       },
       {
         id: "4-12",
@@ -419,6 +466,7 @@ export const syllabusData: Unit[] = [
         whenToUse: "Measuring linear dependence",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        youtubeUrl: "https://www.youtube.com/watch?v=rb2nU7YZV_I",
       },
       {
         id: "4-13",
@@ -428,16 +476,19 @@ export const syllabusData: Unit[] = [
         whenToUse: "Measuring strength of linear relationship",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        youtubeUrl: "https://www.youtube.com/watch?v=uW0TapQ6UQU",
       },
       {
         id: "4-14",
         title: "Multivariate Input Models",
         description: "Modeling multiple correlated input variables. Methods: multivariate normal distribution, copulas. Captures correlation between inputs.",
+        youtubeUrl: "https://www.youtube.com/watch?v=UVvuwv-ne1I",
       },
       {
         id: "4-15",
         title: "Time-Series Input Models",
         description: "Modeling time-dependent input data. AR, MA, ARMA models. Used for correlated inputs over time. Critical for realistic simulation.",
+        youtubeUrl: "https://www.youtube.com/watch?v=Mc6sBAUdDP4",
       },
       {
         id: "4-16",
@@ -447,12 +498,13 @@ export const syllabusData: Unit[] = [
         whenToUse: "Modeling correlated time series data",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
-        youtubeUrl: "https://www.youtube.com/watch?v=pdiYyz7WpWk",
+        youtubeUrl: "https://www.youtube.com/watch?v=5-2C4eO4cPQ",
       },
       {
         id: "4-17",
         title: "EAR(1) Model",
         description: "Exponential autoregressive model for positively correlated exponential data. Used for inter-arrival times with correlation.",
+        youtubeUrl: "https://www.youtube.com/watch?v=AN0a58F6cxA",
       },
     ],
   },
@@ -466,6 +518,7 @@ export const syllabusData: Unit[] = [
         id: "5-1",
         title: "Model Building",
         description: "Process of creating simulation model: conceptual model (understanding system), mathematical model (equations), computer model (implementation).",
+        youtubeUrl: "https://www.youtube.com/watch?v=5kzw_sEkeC0",
       },
       {
         id: "5-2",
@@ -473,41 +526,49 @@ export const syllabusData: Unit[] = [
         description: "Debugging the model. Is the model built correctly? Check for coding errors, logic errors. Methods: code review, trace, animation, comparison with analytical solution.",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        youtubeUrl: "https://www.youtube.com/watch?v=h32pVXyL9es",
       },
       {
         id: "5-3",
         title: "Calibration and Validation of Models",
         description: "Calibration: adjust parameters to match data. Validation: check if model represents reality. Iterative process.",
+        youtubeUrl: "https://www.youtube.com/watch?v=lBssmVLc480",
       },
       {
         id: "5-4",
         title: "Face Validity",
         description: "Expert review of model structure and behavior. Does it look reasonable? Is logic sound? Simple but effective validation method.",
+        youtubeUrl: "https://www.youtube.com/watch?v=GyW2FYhyBLI",
       },
       {
         id: "5-5",
         title: "Validation of Model Assumptions",
         description: "Check if model assumptions match reality. Are distributions appropriate? Are parameter estimates valid? Sensitivity analysis of assumptions.",
+        youtubeUrl: "https://www.youtube.com/watch?v=sDrAoR17pNM",
       },
       {
         id: "5-6",
         title: "Validating Input-Output Transformations",
         description: "Check if input-output relationships in model match real system. Compare model predictions with actual system behavior.",
+        youtubeUrl: "https://www.youtube.com/watch?v=Okd0HY7_N6k",
       },
       {
         id: "5-7",
         title: "Input-Output Validation",
         description: "Compare model outputs with real system outputs using statistical tests, confidence intervals, graphical comparison. Critical for credibility.",
+        youtubeUrl: "https://www.youtube.com/watch?v=aJi69Z2HDDo",
       },
       {
         id: "5-8",
         title: "Using Historical Data",
         description: "Validate model using past system data. Compare model predictions with historical records. Strong validation method when data available.",
+        youtubeUrl: "https://www.youtube.com/watch?v=j22tLUQQDh4",
       },
       {
         id: "5-9",
         title: "Using a Turing Test",
         description: "Experts compare model output with real system output without knowing which is which. If they can't distinguish, model passes. Subjective but effective.",
+        youtubeUrl: "https://www.youtube.com/watch?v=4bJqPswPfV8",
       },
       {
         id: "5-10",
@@ -517,6 +578,7 @@ export const syllabusData: Unit[] = [
         whenToUse: "Model validation hypothesis testing",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        youtubeUrl: "https://www.youtube.com/watch?v=a_l991xUAOU",
       },
       {
         id: "5-11",
@@ -526,6 +588,7 @@ export const syllabusData: Unit[] = [
         whenToUse: "Model validation hypothesis testing",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        youtubeUrl: "https://www.youtube.com/watch?v=9yQm9F2_yIk",
       },
       {
         id: "5-12",
@@ -535,26 +598,31 @@ export const syllabusData: Unit[] = [
         whenToUse: "Evaluating test effectiveness",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        youtubeUrl: "https://www.youtube.com/watch?v=Rsc5znwR5FA",
       },
       {
         id: "5-13",
         title: "Types of Simulations with Respect to Output Analysis",
         description: "Terminating: natural end condition (bank opens to closes). Non-terminating/Steady-state: long-run behavior (continuous manufacturing). Different analysis methods.",
+        youtubeUrl: "https://www.youtube.com/watch?v=WV3mmAda9B8",
       },
       {
         id: "5-14",
         title: "Stochastic Nature of Output Data",
         description: "Simulation output is random due to random inputs. Need statistical analysis, confidence intervals, replication. Single run not representative.",
+        youtubeUrl: "https://www.youtube.com/watch?v=6bHYlqwtdfM",
       },
       {
         id: "5-15",
         title: "Measures of Performance and Their Estimation",
         description: "Key measures: average waiting time, utilization, throughput, response time, queue length. Estimate via sample mean with confidence interval.",
+        youtubeUrl: "https://www.youtube.com/watch?v=mAktrDqjjOQ",
       },
       {
         id: "5-16",
         title: "Output Analysis for Steady-State Simulations",
         description: "Simulations that run long enough to reach steady-state. Need to handle initialization bias, ensure independence of observations.",
+        youtubeUrl: "https://www.youtube.com/watch?v=rK9_YXojF74",
       },
       {
         id: "5-17",
@@ -562,6 +630,7 @@ export const syllabusData: Unit[] = [
         description: "Bias in early output due to starting conditions not representing steady-state. Solutions: warm-up period, delete initial data, representative initial conditions.",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        youtubeUrl: "https://www.youtube.com/watch?v=z7MdgCKoo_E",
       },
       {
         id: "5-18",
@@ -569,26 +638,31 @@ export const syllabusData: Unit[] = [
         description: "Divide output into batches, use batch means for interval estimation. Reduces correlation between observations. Critical for steady-state analysis.",
         formula: "CI = X̄ ± t(α/2,n-1) * (s/√n)",
         whenToUse: "Interval estimation for steady-state simulation",
+        youtubeUrl: "https://www.youtube.com/watch?v=-N-9sSgVTGk",
       },
       {
         id: "5-19",
         title: "Case Study: Manufacturing and Material Handling Systems",
         description: "Simulation of production lines, assembly systems, conveyor belts, AGVs. Optimizing throughput, reducing bottlenecks, capacity planning.",
+        youtubeUrl: "https://www.youtube.com/watch?v=xxqCyfpWTPA",
       },
       {
         id: "5-20",
         title: "Case Study: Healthcare System Modeling",
         description: "Hospital emergency department, patient flow, resource allocation. Reducing wait times, optimizing staffing, bed capacity planning.",
+        youtubeUrl: "https://www.youtube.com/watch?v=RyAybdLd6vo",
       },
       {
         id: "5-21",
         title: "Case Study: Epidemiological Modeling",
         description: "Disease spread simulation using DES. Modeling infection transmission, quarantine effectiveness, vaccination impact, outbreak prediction.",
+        youtubeUrl: "https://www.youtube.com/watch?v=m5f9z9h86UY",
       },
       {
         id: "5-22",
         title: "Case Study: Cellular and Molecular Dynamics",
         description: "Simulation of biological processes at cellular and molecular level. Protein folding, chemical reactions, drug interactions, biological pathways.",
+        youtubeUrl: "https://www.youtube.com/watch?v=YyW_aTkkvRA",
       },
     ],
   },
