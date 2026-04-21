@@ -8,7 +8,7 @@ import { useStore } from "@/store/useStore";
 import PhotoUpload from "@/components/PhotoUpload";
 
 export default function PracticePage() {
-  const { updatePracticeProgress, practiceProgress, markConceptPracticed, markHandwritten, isHandwritten } = useStore();
+  const { updatePracticeProgress, practiceProgress, markConceptPracticed, markHandwritten, removeHandwrittenPhoto, conceptProgress } = useStore();
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("All");
   const [selectedUnit, setSelectedUnit] = useState<number>(0);
 
@@ -140,7 +140,8 @@ export default function PracticePage() {
                 <PhotoUpload
                   itemId={pyq.id}
                   onPhotoUploaded={(photo) => markHandwritten(pyq.id, photo)}
-                  isUploaded={isHandwritten(pyq.id)}
+                  onPhotoRemoved={(photoIndex) => removeHandwrittenPhoto(pyq.id, photoIndex)}
+                  photos={conceptProgress[pyq.id]?.handwrittenPhotos || []}
                 />
 
                 <div className="flex gap-2">

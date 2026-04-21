@@ -8,7 +8,7 @@ import { useStore } from "@/store/useStore";
 import PhotoUpload from "@/components/PhotoUpload";
 
 export default function ExamPage() {
-  const { examState, startExam, submitAnswer, nextQuestion, endExam, resetExam, addMistake, markHandwritten, isHandwritten } = useStore();
+  const { examState, startExam, submitAnswer, nextQuestion, endExam, resetExam, addMistake, markHandwritten, removeHandwrittenPhoto, conceptProgress } = useStore();
   const [currentAnswer, setCurrentAnswer] = useState<string>("");
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
@@ -225,7 +225,8 @@ export default function ExamPage() {
             <PhotoUpload
               itemId={currentPYQ.id}
               onPhotoUploaded={(photo) => markHandwritten(currentPYQ.id, photo)}
-              isUploaded={isHandwritten(currentPYQ.id)}
+              onPhotoRemoved={(photoIndex) => removeHandwrittenPhoto(currentPYQ.id, photoIndex)}
+              photos={conceptProgress[currentPYQ.id]?.handwrittenPhotos || []}
             />
 
             <textarea

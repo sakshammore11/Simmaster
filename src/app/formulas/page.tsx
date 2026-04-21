@@ -16,7 +16,7 @@ interface FormulaCard {
 }
 
 export default function FormulasPage() {
-  const { addBookmark, isBookmarked, removeBookmark, markHandwritten, isHandwritten } = useStore();
+  const { addBookmark, isBookmarked, removeBookmark, markHandwritten, removeHandwrittenPhoto, conceptProgress } = useStore();
   const [selectedUnit, setSelectedUnit] = useState<number>(0);
   const [flippedCard, setFlippedCard] = useState<string | null>(null);
 
@@ -174,7 +174,8 @@ export default function FormulasPage() {
                   <PhotoUpload
                     itemId={formula.id}
                     onPhotoUploaded={(photo) => markHandwritten(formula.id, photo)}
-                    isUploaded={isHandwritten(formula.id)}
+                    onPhotoRemoved={(photoIndex) => removeHandwrittenPhoto(formula.id, photoIndex)}
+                    photos={conceptProgress[formula.id]?.handwrittenPhotos || []}
                   />
 
                   <div className="p-3 rounded-lg bg-black/5">

@@ -1,16 +1,16 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Upload, X, Check } from "lucide-react";
+import { Upload, X, Check, Plus } from "lucide-react";
 
 interface PhotoUploadProps {
   itemId: string;
   onPhotoUploaded: (photo: string) => void;
-  isUploaded: boolean;
+  onPhotoRemoved: (photoIndex: number) => void;
+  photos: string[];
 }
 
-export default function PhotoUpload({ itemId, onPhotoUploaded, isUploaded }: PhotoUploadProps) {
-  const [photo, setPhoto] = useState<string>("");
+export default function PhotoUpload({ itemId, onPhotoUploaded, onPhotoRemoved, photos }: PhotoUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -19,7 +19,6 @@ export default function PhotoUpload({ itemId, onPhotoUploaded, isUploaded }: Pho
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result as string;
-        setPhoto(result);
         onPhotoUploaded(result);
       };
       reader.readAsDataURL(file);
@@ -50,16 +49,17 @@ export default function PhotoUpload({ itemId, onPhotoUploaded, isUploaded }: Pho
     }
   };
 
-  const handleRemove = () => {
-    setPhoto("");
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
+  const handleAddPhoto = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleRemovePhoto = (index: number) => {
+    onPhotoRemoved(index);
   };
 
   return (
     <div className="mt-6">
-      {!isUploaded && !photo ? (
+      {photos.length === 0 ? (
         <div
           className={`border-2 border-dashed rounded-xl p-6 text-center transition-all ${
             isDragging ? "border-orange bg-orange/10" : "border-white/20 hover:border-orange/50"
@@ -81,7 +81,7 @@ export default function PhotoUpload({ itemId, onPhotoUploaded, isUploaded }: Pho
             className="hidden"
           />
           <button
-            onClick={() => fileInputRef.current?.click()}
+            onClick={handleAddPhoto}
             className="px-4 py-2 rounded-full bg-gradient-to-r from-orange to-ocean text-white text-sm hover:opacity-90 transition-opacity"
           >
             Select Photo
@@ -92,21 +92,41 @@ export default function PhotoUpload({ itemId, onPhotoUploaded, isUploaded }: Pho
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Check className="w-5 h-5 text-green-500" />
-              <span className="text-sm font-semibold">Handwritten Notes Uploaded</span>
+              <span className="text-sm font-semibold">Handwritten Notes ({photos.length})</span>
             </div>
             <button
-              onClick={handleRemove}
-              className="p-1 rounded-full hover:bg-white/10 transition-colors"
-              title="Remove photo"
+              onClick={handleAddPhoto}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-orange to-ocean text-white text-xs hover:opacity-90 transition-opacity"
             >
-              <X className="w-4 h-4 opacity-50" />
+              <Plus className="w-3 h-3" />
+              Add More
             </button>
           </div>
-          {photo && (
-            <div className="relative rounded-lg overflow-hidden bg-black/5">
-              <img src={photo} alt="Handwritten notes" className="w-full h-48 object-contain" />
-            </div>
-          )}
+          
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {photos.map((photo, index) => (
+              <div key={index} className="relative group">
+                <div className="relative rounded-lg overflow-hidden bg-black/5 aspect-square">
+                  <img src={photo} alt={`Handwritten notes ${index + 1}`} className="w-full h-full object-contain" />
+                  <button
+                    onClick={() => handleRemovePhoto(index)}
+                    className="absolute top-2 right-2 p-1.5 rounded-full bg-red/20 text-red opacity-0 group-hover:opacity-100 transition-opacity"
+                    title="Remove photo"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleInputChange}
+            className="hidden"
+          />
         </div>
       )}
     </div>

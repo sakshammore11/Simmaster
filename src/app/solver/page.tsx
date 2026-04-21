@@ -9,7 +9,7 @@ import { useStore } from "@/store/useStore";
 import PhotoUpload from "@/components/PhotoUpload";
 
 export default function SolverPage() {
-  const { addMistake, updatePracticeProgress, markHandwritten, isHandwritten } = useStore();
+  const { addMistake, updatePracticeProgress, markHandwritten, removeHandwrittenPhoto, conceptProgress } = useStore();
   const [selectedPYQ, setSelectedPYQ] = useState<PYQ | null>(null);
   const [expandedSteps, setExpandedSteps] = useState<Set<number>>(new Set());
   const [aiExplanation, setAiExplanation] = useState<string>("");
@@ -104,7 +104,8 @@ export default function SolverPage() {
             <PhotoUpload
               itemId={selectedPYQ.id}
               onPhotoUploaded={(photo) => markHandwritten(selectedPYQ.id, photo)}
-              isUploaded={isHandwritten(selectedPYQ.id)}
+              onPhotoRemoved={(photoIndex) => removeHandwrittenPhoto(selectedPYQ.id, photoIndex)}
+              photos={conceptProgress[selectedPYQ.id]?.handwrittenPhotos || []}
             />
 
             {/* Step-by-Step Solution */}

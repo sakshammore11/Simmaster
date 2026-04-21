@@ -9,7 +9,7 @@ import { getAIExplanation } from "@/services/aiTutor";
 import PhotoUpload from "@/components/PhotoUpload";
 
 export default function LearnPage() {
-  const { addBookmark, isBookmarked, removeBookmark, markConceptLearned, markConceptPracticed, conceptProgress, markHandwritten, isHandwritten } = useStore();
+  const { addBookmark, isBookmarked, removeBookmark, markConceptLearned, markConceptPracticed, conceptProgress, markHandwritten, removeHandwrittenPhoto } = useStore();
   const [selectedUnit, setSelectedUnit] = useState<number>(1);
   const [selectedConcept, setSelectedConcept] = useState<Concept | null>(null);
   const [aiExplanation, setAiExplanation] = useState<string>("");
@@ -118,7 +118,8 @@ export default function LearnPage() {
             <PhotoUpload
               itemId={selectedConcept.id}
               onPhotoUploaded={(photo) => markHandwritten(selectedConcept.id, photo)}
-              isUploaded={isHandwritten(selectedConcept.id)}
+              onPhotoRemoved={(photoIndex) => removeHandwrittenPhoto(selectedConcept.id, photoIndex)}
+              photos={conceptProgress[selectedConcept.id]?.handwrittenPhotos || []}
             />
 
             {selectedConcept.formula && (
