@@ -409,8 +409,78 @@ export const useStore = create<StoreState>((set, get) => ({
       syncFromDB: async () => {
         try {
           const state = get();
+          const authenticatedUserId = state.user?.userId;
+          const localStorageUserId = getUserId();
+          
+          // If user is authenticated, migrate data from localStorage ID if needed
+          if (authenticatedUserId && authenticatedUserId !== localStorageUserId) {
+            // Define migrateData function inline
+            const migrateData = async (fromUserId: string, toUserId: string) => {
+              try {
+                console.log('Migrating data from', fromUserId, 'to', toUserId);
+                
+                // Fetch data from old ID
+                const oldData = await fetchUserData(fromUserId);
+                if (!oldData) {
+                  console.log('No old data found to migrate');
+                  return;
+                }
+                
+                // Fetch current data from new ID
+                const newData = await fetchUserData(toUserId);
+                
+                // Merge data (prefer new data if both exist)
+                const mergedData = {
+                  bookmarks: newData?.bookmarks || oldData.bookmarks || [],
+                  mistakes: newData?.mistakes || oldData.mistakes || [],
+                  examState: newData?.examState || oldData.examState || {
+                    isActive: false,
+                    questions: [],
+                    currentQuestion: 0,
+                    answers: {},
+                    startTime: 0,
+                    timeLimit: 60,
+                  },
+                  practiceProgress: {
+                    ...oldData.practiceProgress,
+                    ...newData?.practiceProgress,
+                  },
+                  conceptProgress: {
+                    ...oldData.conceptProgress,
+                    ...newData?.conceptProgress,
+                  },
+                  darkMode: newData?.darkMode ?? oldData.darkMode ?? false,
+                  searchQuery: newData?.searchQuery || oldData.searchQuery || '',
+                };
+                
+                // Save merged data to new ID
+                await updateUserData(toUserId, mergedData);
+                
+                console.log('Data migrated successfully');
+                
+                // Update localStorage to use new user ID
+                localStorage.setItem('simmaster-user-id', toUserId);
+                
+                // Update local state with merged data
+                set({
+                  bookmarks: mergedData.bookmarks,
+                  mistakes: mergedData.mistakes,
+                  examState: mergedData.examState,
+                  practiceProgress: mergedData.practiceProgress,
+                  conceptProgress: mergedData.conceptProgress,
+                  darkMode: mergedData.darkMode,
+                  searchQuery: mergedData.searchQuery,
+                });
+              } catch (error) {
+                console.error('Error migrating data:', error);
+              }
+            };
+            
+            await migrateData(localStorageUserId, authenticatedUserId);
+          }
+          
           // Use authenticated user ID if available, otherwise fall back to localStorage ID
-          const userId = state.user?.userId || getUserId();
+          const userId = authenticatedUserId || localStorageUserId;
           const data = await fetchUserData(userId);
           if (data) {
             set({
