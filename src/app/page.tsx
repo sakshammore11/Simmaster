@@ -104,7 +104,7 @@ export default function Home() {
 
           <div className="flex items-center gap-2">
             {/* Sync Status */}
-            <div className="flex items-center gap-1 text-xs opacity-70" title="Data sync status">
+            <div className="flex items-center gap-2 text-xs opacity-70" title="Data sync status">
               {isSyncing ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin text-orange" />
@@ -122,6 +122,16 @@ export default function Home() {
                 </>
               )}
             </div>
+
+            {/* Manual Sync Button */}
+            <button
+              onClick={() => useStore.getState().syncToDB()}
+              disabled={isSyncing}
+              className="p-2 rounded-full hover:bg-white/10 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+              title="Sync now"
+            >
+              <RefreshCw className={`w-5 h-5 ${isSyncing ? 'animate-spin' : ''}`} />
+            </button>
 
             <button
               onClick={logout}
