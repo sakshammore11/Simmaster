@@ -404,7 +404,9 @@ export const useStore = create<StoreState>((set, get) => ({
       // MongoDB Sync
       syncFromDB: async () => {
         try {
-          const userId = getUserId();
+          const state = get();
+          // Use authenticated user ID if available, otherwise fall back to localStorage ID
+          const userId = state.user?.userId || getUserId();
           const data = await fetchUserData(userId);
           if (data) {
             set({
@@ -432,7 +434,8 @@ export const useStore = create<StoreState>((set, get) => ({
       syncToDB: async () => {
         try {
           const state = get();
-          const userId = getUserId();
+          // Use authenticated user ID if available, otherwise fall back to localStorage ID
+          const userId = state.user?.userId || getUserId();
           await updateUserData(userId, {
             bookmarks: state.bookmarks,
             mistakes: state.mistakes,
