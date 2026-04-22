@@ -4,10 +4,60 @@ import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/store/useStore';
 
+const LOCAL_STORAGE_KEY = 'simmaster-data-backup';
+
+// Save to localStorage
+const saveToLocalStorage = (data: any) => {
+  try {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
+  } catch (error) {
+    console.error('Error saving to localStorage:', error);
+  }
+};
+
+// Load from localStorage
+const loadFromLocalStorage = () => {
+  try {
+    const data = localStorage.getItem(LOCAL_STORAGE_KEY);
+    return data ? JSON.parse(data) : null;
+  } catch (error) {
+    console.error('Error loading from localStorage:', error);
+    return null;
+  }
+};
+
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { checkAuth, isAuthenticated, syncFromDB, syncToDB } = useStore();
   const syncTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const hasLoadedFromLocalStorage = useRef(false);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    if (hasLoadedFromLocalStorage.current) return;
+    hasLoadedFromLocalStorage.current = true;
+
+    const localData = loadFromLocalStorage();
+    if (localData) {
+      console.log('Loading data from localStorage:', localData);
+      useStore.setState({
+        bookmarks: localData.bookmarks || [],
+        mistakes: localData.mistakes || [],
+        examState: localData.examState || {
+          isActive: false,
+          questions: [],
+          currentQuestion: 0,
+          answers: {},
+          startTime: 0,
+          timeLimit: 60,
+        },
+        practiceProgress: localData.practiceProgress || {},
+        conceptProgress: localData.conceptProgress || {},
+        darkMode: localData.darkMode || false,
+        searchQuery: localData.searchQuery || "",
+      });
+    }
+  }, []);
 
   useEffect(() => {
     // Check authentication on mount
@@ -29,6 +79,21 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const conceptProgress = useStore((state) => state.conceptProgress);
   const darkMode = useStore((state) => state.darkMode);
   const searchQuery = useStore((state) => state.searchQuery);
+
+  // Save to localStorage on every state change
+  useEffect(() => {
+    const state = useStore.getState();
+    const dataToSave = {
+      bookmarks: state.bookmarks,
+      mistakes: state.mistakes,
+      examState: state.examState,
+      practiceProgress: state.practiceProgress,
+      conceptProgress: state.conceptProgress,
+      darkMode: state.darkMode,
+      searchQuery: state.searchQuery,
+    };
+    saveToLocalStorage(dataToSave);
+  }, [bookmarks, mistakes, examState, practiceProgress, conceptProgress, darkMode, searchQuery]);
 
   // Debounced sync to MongoDB on any state change
   useEffect(() => {
