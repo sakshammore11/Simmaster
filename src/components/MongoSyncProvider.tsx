@@ -49,6 +49,41 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     };
   }, [bookmarks, mistakes, examState, practiceProgress, conceptProgress, darkMode, searchQuery, syncToDB, isAuthenticated]);
 
+  // Sync on page unload to prevent data loss
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const handleBeforeUnload = () => {
+      // Use navigator.sendBeacon for reliable sync on page unload
+      const state = useStore.getState();
+      const userId = state.user?.userId || localStorage.getItem('simmaster-user-id');
+      
+      if (userId) {
+        const data = {
+          userId,
+          bookmarks: state.bookmarks,
+          mistakes: state.mistakes,
+          examState: state.examState,
+          practiceProgress: state.practiceProgress,
+          conceptProgress: state.conceptProgress,
+          darkMode: state.darkMode,
+          searchQuery: state.searchQuery,
+        };
+        
+        // Use sendBeacon for reliable sync during page unload
+        navigator.sendBeacon('/api/user', new Blob([JSON.stringify(data)], {
+          type: 'application/json',
+        }));
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [isAuthenticated]);
+
   useEffect(() => {
     // Redirect to login if not authenticated (except on login/signup pages)
     const path = window.location.pathname;

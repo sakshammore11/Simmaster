@@ -2,18 +2,27 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { BookOpen, Calculator, Clock, Target, Lightbulb, AlertCircle, Search, Moon, Sun, Bookmark, ChevronRight, Play, ArrowRight, CheckCircle, Circle, LogOut } from "lucide-react";
+import { BookOpen, Calculator, Clock, Target, Lightbulb, AlertCircle, Search, Moon, Sun, Bookmark, ChevronRight, Play, ArrowRight, CheckCircle, Circle, LogOut, Cloud, CloudOff, RefreshCw } from "lucide-react";
 import { useStore } from "@/store/useStore";
 import { syllabusData } from "@/data/syllabus";
 import DailyProgress from "@/components/DailyProgress";
 
 export default function Home() {
-  const { darkMode, toggleDarkMode, setSearchQuery, mistakes, getWeakTopics, practiceProgress, conceptProgress, getOverallProgress, logout } = useStore();
+  const { darkMode, toggleDarkMode, setSearchQuery, mistakes, getWeakTopics, practiceProgress, conceptProgress, getOverallProgress, logout, isSyncing, lastSyncedAt } = useStore();
   const [searchInput, setSearchInput] = useState("");
   const [showExplore, setShowExplore] = useState(false);
 
   const weakTopics = getWeakTopics();
   const overallProgress = getOverallProgress();
+
+  // Format last synced time
+  const formatLastSynced = (timestamp: number | null) => {
+    if (!timestamp) return null;
+    const seconds = Math.floor((Date.now() - timestamp) / 1000);
+    if (seconds < 60) return 'Just now';
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+    return `${Math.floor(seconds / 3600)}h ago`;
+  };
 
   // Calculate overall practice progress
   const totalPracticeProgress = Object.values(practiceProgress).reduce((acc, curr) => {
@@ -94,6 +103,26 @@ export default function Home() {
           </h1>
 
           <div className="flex items-center gap-2">
+            {/* Sync Status */}
+            <div className="flex items-center gap-1 text-xs opacity-70" title="Data sync status">
+              {isSyncing ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin text-orange" />
+                  <span>Saving...</span>
+                </>
+              ) : lastSyncedAt ? (
+                <>
+                  <Cloud className="w-4 h-4 text-green-500" />
+                  <span>{formatLastSynced(lastSyncedAt)}</span>
+                </>
+              ) : (
+                <>
+                  <CloudOff className="w-4 h-4 text-red-500" />
+                  <span>Not synced</span>
+                </>
+              )}
+            </div>
+
             <button
               onClick={logout}
               className="p-2 rounded-full hover:bg-white/10 transition-colors"

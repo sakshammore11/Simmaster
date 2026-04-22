@@ -77,3 +77,31 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
   }
 }
+
+// POST /api/user - Update user data (for sendBeacon on page unload)
+export async function POST(request: NextRequest) {
+  try {
+    await connectDB();
+    
+    const body = await request.json();
+    const { userId, ...updateData } = body;
+    
+    console.log('POST /api/user (sendBeacon) - userId:', userId);
+    
+    if (!userId) {
+      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+    }
+    
+    const user = await User.findOneAndUpdate(
+      { userId },
+      { $set: updateData },
+      { new: true, upsert: true }
+    );
+    
+    console.log('User updated successfully via sendBeacon:', user?.userId);
+    return NextResponse.json(user);
+  } catch (error) {
+    console.error('Error updating user via POST:', error);
+    return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
+  }
+}

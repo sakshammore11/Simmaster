@@ -102,6 +102,10 @@ interface StoreState {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
+
+  // Sync status
+  isSyncing: boolean;
+  lastSyncedAt: number | null;
 }
 
 export const useStore = create<StoreState>((set, get) => ({
@@ -432,34 +436,60 @@ export const useStore = create<StoreState>((set, get) => ({
       },
 
       syncToDB: async () => {
-        try {
-          const state = get();
-          // Use authenticated user ID if available, otherwise fall back to localStorage ID
-          const userId = state.user?.userId || getUserId();
-          console.log('Syncing to DB with userId:', userId);
-          console.log('Data to sync:', {
-            bookmarks: state.bookmarks,
-            mistakes: state.mistakes,
-            conceptProgress: state.conceptProgress,
-          });
-          const result = await updateUserData(userId, {
-            bookmarks: state.bookmarks,
-            mistakes: state.mistakes,
-            examState: state.examState,
-            practiceProgress: state.practiceProgress,
-            conceptProgress: state.conceptProgress,
-            darkMode: state.darkMode,
-            searchQuery: state.searchQuery,
-          });
-          console.log('Sync to DB successful:', result);
-        } catch (error) {
-          console.error('Error syncing to DB:', error);
-        }
+        const maxRetries = 3;
+        let retryCount = 0;
+        
+        const attemptSync = async (): Promise<void> => {
+          try {
+            set({ isSyncing: true });
+            const state = get();
+            // Use authenticated user ID if available, otherwise fall back to localStorage ID
+            const userId = state.user?.userId || getUserId();
+            console.log(`Syncing to DB with userId: ${userId} (attempt ${retryCount + 1}/${maxRetries})`);
+            console.log('Data to sync:', {
+              bookmarks: state.bookmarks,
+              mistakes: state.mistakes,
+              conceptProgress: state.conceptProgress,
+            });
+            const result = await updateUserData(userId, {
+              bookmarks: state.bookmarks,
+              mistakes: state.mistakes,
+              examState: state.examState,
+              practiceProgress: state.practiceProgress,
+              conceptProgress: state.conceptProgress,
+              darkMode: state.darkMode,
+              searchQuery: state.searchQuery,
+            });
+            console.log('Sync to DB successful:', result);
+            set({ isSyncing: false, lastSyncedAt: Date.now() });
+          } catch (error) {
+            console.error(`Error syncing to DB (attempt ${retryCount + 1}/${maxRetries}):`, error);
+            retryCount++;
+            
+            if (retryCount < maxRetries) {
+              // Exponential backoff: 1s, 2s, 4s
+              const delay = Math.pow(2, retryCount - 1) * 1000;
+              console.log(`Retrying in ${delay}ms...`);
+              await new Promise(resolve => setTimeout(resolve, delay));
+              return attemptSync();
+            } else {
+              console.error('Max retries reached. Sync failed.');
+              set({ isSyncing: false });
+              throw error;
+            }
+          }
+        };
+        
+        await attemptSync();
       },
 
       // Authentication
       isAuthenticated: false,
       user: null,
+
+      // Sync status
+      isSyncing: false,
+      lastSyncedAt: null,
       login: async (email, password) => {
         try {
           const response = await fetch('/api/auth/login', {
