@@ -515,12 +515,16 @@ export const useStore = create<StoreState>((set, get) => ({
             const state = get();
             // Use authenticated user ID if available, otherwise fall back to localStorage ID
             const userId = state.user?.userId || getUserId();
-            console.log(`Syncing to DB with userId: ${userId} (attempt ${retryCount + 1}/${maxRetries})`);
+            console.log(`=== SYNC START ===`);
+            console.log(`User ID: ${userId}`);
+            console.log(`Authenticated user: ${state.user?.email || 'none'}`);
+            console.log(`Attempt ${retryCount + 1}/${maxRetries}`);
             console.log('Data to sync:', {
               bookmarks: state.bookmarks,
               mistakes: state.mistakes,
               conceptProgress: state.conceptProgress,
             });
+            
             const result = await updateUserData(userId, {
               bookmarks: state.bookmarks,
               mistakes: state.mistakes,
@@ -530,10 +534,15 @@ export const useStore = create<StoreState>((set, get) => ({
               darkMode: state.darkMode,
               searchQuery: state.searchQuery,
             });
+            
             console.log('Sync to DB successful:', result);
+            console.log(`=== SYNC COMPLETE ===`);
             set({ isSyncing: false, lastSyncedAt: Date.now() });
           } catch (error) {
-            console.error(`Error syncing to DB (attempt ${retryCount + 1}/${maxRetries}):`, error);
+            console.error(`=== SYNC FAILED ===`);
+            console.error(`Error:`, error);
+            console.error(`Error message:`, error instanceof Error ? error.message : 'Unknown');
+            console.error(`Attempt ${retryCount + 1}/${maxRetries}`);
             retryCount++;
             
             if (retryCount < maxRetries) {
