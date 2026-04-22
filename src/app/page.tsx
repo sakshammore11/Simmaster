@@ -86,7 +86,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      {/* Header - Simplified */}
+      {/* Header */}
       <header className="sticky top-0 z-50 glass border-b border-white/10 px-4 py-3">
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
           <h1 className="text-xl font-bold bg-gradient-to-r from-orange to-ocean bg-clip-text text-transparent">
@@ -120,182 +120,68 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Content - Simplified */}
-      <section className="px-4 py-8 max-w-2xl mx-auto">
-        {/* Continue Where You Left Off - Most Important */}
-        <div className="glass-card p-6 mb-8 animate-fade-in">
-          <div className="flex items-center gap-2 mb-4">
-            <Play className="w-5 h-5 text-orange" />
-            <span className="font-semibold text-orange">Continue where you left off</span>
-          </div>
-          <Link
-            href={nextStep.href}
-            className="group block p-5 rounded-xl bg-gradient-to-r from-orange/20 to-ocean/20 border border-orange/30 hover:border-orange/50 transition-all"
-          >
-            <div className="flex items-center justify-between">
+      <main className="max-w-4xl mx-auto p-4 space-y-6">
+        {/* What to do next - MAIN FOCUS */}
+        <div className="glass rounded-2xl p-6 border-2 border-orange/30">
+          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <Target className="w-5 h-5 text-orange" />
+            What to do next
+          </h2>
+          <Link href={nextStep.href} className="block">
+            <div className="bg-gradient-to-r from-orange/20 to-ocean/20 rounded-xl p-6 hover:from-orange/30 hover:to-ocean/30 transition-all cursor-pointer">
               <div className="flex items-center gap-4">
-                <div className="p-3 rounded-full bg-white/20">
-                  <nextStep.icon className="w-6 h-6" />
+                <div className="p-3 bg-gradient-to-br from-orange to-ocean rounded-xl">
+                  <nextStep.icon className="w-6 h-6 text-white" />
                 </div>
-                <div>
-                  <h3 className="font-bold text-lg mb-1">{nextStep.title}</h3>
-                  <p className="text-sm opacity-70">{nextStep.description}</p>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold mb-1">{nextStep.title}</h3>
+                  <p className="opacity-70">{nextStep.description}</p>
                 </div>
+                <ArrowRight className="w-6 h-6 opacity-50" />
               </div>
-              <ArrowRight className="w-6 h-6 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
             </div>
           </Link>
         </div>
 
-        {/* Daily Progress / Study Planner */}
+        {/* Simple Progress */}
+        <div className="glass rounded-2xl p-6">
+          <h2 className="text-lg font-bold mb-4">Your Progress</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-center p-4 bg-white/5 rounded-xl">
+              <div className="text-3xl font-bold text-orange">{overallProgress.learned}</div>
+              <div className="text-sm opacity-70">Concepts learned</div>
+              <div className="text-xs opacity-50">of {totalConcepts} total</div>
+            </div>
+            <div className="text-center p-4 bg-white/5 rounded-xl">
+              <div className="text-3xl font-bold text-ocean">{totalPracticeProgress.correct}</div>
+              <div className="text-sm opacity-70">Questions correct</div>
+              <div className="text-xs opacity-50">{practicePercentage.toFixed(0)}% accuracy</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Daily Progress */}
         <DailyProgress conceptProgress={conceptProgress} />
 
-        {/* Quick Progress */}
-        {totalPracticeProgress.total > 0 && (
-          <div className="glass-card p-5 mb-8 animate-fade-in">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold">Your Progress</span>
-              <span className="text-sm opacity-70">{Math.round(practicePercentage)}%</span>
-            </div>
-            <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-orange to-ocean transition-all duration-500"
-                style={{ width: `${practicePercentage}%` }}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Comprehensive Learning Path - Zero to Pro */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold mb-4">Zero-to-Pro Learning Path</h2>
-          <p className="text-sm opacity-70 mb-4">Complete all units systematically to master the subject</p>
-          
-          {/* Overall Progress */}
-          <div className="glass-card p-4 mb-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold">Overall Progress</span>
-              <span className="text-sm opacity-70">{Math.round(conceptPercentage)}% concepts learned</span>
-            </div>
-            <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-orange to-ocean transition-all duration-500"
-                style={{ width: `${conceptPercentage}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Unit-wise Progress */}
-          <div className="space-y-3">
-            {syllabusData.map((unit) => {
-              const progress = getUnitProgress(unit.id);
-              const progressPercent = (progress.learned / progress.total) * 100;
-              const isComplete = progress.learned === progress.total;
-              
-              return (
-                <Link
-                  key={unit.id}
-                  href={`/learn?unit=${unit.id}`}
-                  className="group flex items-center gap-4 p-4 rounded-xl glass hover:bg-white/10 transition-all"
-                >
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-r from-orange to-ocean flex items-center justify-center text-white font-bold">
-                    {unit.id}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{unit.title}</h3>
-                    <p className="text-sm opacity-70">
-                      {progress.learned}/{progress.total} concepts learned • {progress.practiced} practiced
-                    </p>
-                    <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden mt-2">
-                      <div
-                        className={`h-full transition-all duration-500 ${isComplete ? 'bg-green-500' : 'bg-gradient-to-r from-orange to-ocean'}`}
-                        style={{ width: `${progressPercent}%` }}
-                      />
-                    </div>
-                  </div>
-                  <div className="flex flex-col items-end gap-1">
-                    {isComplete ? (
-                      <CheckCircle className="w-5 h-5 text-green-500" />
-                    ) : (
-                      <Circle className="w-5 h-5 opacity-30" />
-                    )}
-                    <span className="text-xs opacity-60">{Math.round(progressPercent)}%</span>
-                  </div>
-                  <ChevronRight className="w-5 h-5 opacity-30 group-hover:opacity-100" />
-                </Link>
-              );
-            })}
-          </div>
+        {/* Simple Navigation */}
+        <div className="grid grid-cols-3 gap-3">
+          <Link href="/learn" className="glass rounded-xl p-4 hover:border-orange/50 transition-all text-center">
+            <BookOpen className="w-6 h-6 mx-auto mb-2 text-orange" />
+            <div className="text-sm font-medium">Learn</div>
+            <div className="text-xs opacity-50">Watch videos</div>
+          </Link>
+          <Link href="/practice" className="glass rounded-xl p-4 hover:border-ocean/50 transition-all text-center">
+            <Calculator className="w-6 h-6 mx-auto mb-2 text-ocean" />
+            <div className="text-sm font-medium">Practice</div>
+            <div className="text-xs opacity-50">Solve problems</div>
+          </Link>
+          <Link href="/exam" className="glass rounded-xl p-4 hover:border-purple/50 transition-all text-center">
+            <Clock className="w-6 h-6 mx-auto mb-2 text-purple" />
+            <div className="text-sm font-medium">Exam</div>
+            <div className="text-xs opacity-50">Test yourself</div>
+          </Link>
         </div>
-
-        {/* Explore More - Hidden by default */}
-        <div>
-          <button
-            onClick={() => setShowExplore(!showExplore)}
-            className="w-full text-center text-sm opacity-60 hover:opacity-100 transition-opacity mb-4"
-          >
-            {showExplore ? "Show less" : "Explore more features ↓"}
-          </button>
-
-          {showExplore && (
-            <div className="space-y-3 animate-fade-in">
-              <Link
-                href="/practice"
-                className="group flex items-center gap-4 p-4 rounded-xl glass hover:bg-white/10 transition-all"
-              >
-                <Target className="w-5 h-5 opacity-50" />
-                <div className="flex-1 text-left">
-                  <h3 className="font-semibold">Topic-wise Practice</h3>
-                </div>
-                <ChevronRight className="w-5 h-5 opacity-30" />
-              </Link>
-
-              <Link
-                href="/formulas"
-                className="group flex items-center gap-4 p-4 rounded-xl glass hover:bg-white/10 transition-all"
-              >
-                <Lightbulb className="w-5 h-5 opacity-50" />
-                <div className="flex-1 text-left">
-                  <h3 className="font-semibold">Formula Flashcards</h3>
-                </div>
-                <ChevronRight className="w-5 h-5 opacity-30" />
-              </Link>
-
-              <Link
-                href="/mistakes"
-                className="group flex items-center gap-4 p-4 rounded-xl glass hover:bg-white/10 transition-all"
-              >
-                <AlertCircle className="w-5 h-5 opacity-50" />
-                <div className="flex-1 text-left">
-                  <h3 className="font-semibold">Mistake Tracker</h3>
-                  {weakTopics.length > 0 && (
-                    <span className="ml-2 px-2 py-0.5 rounded-full bg-orange/20 text-orange text-xs">
-                      {weakTopics.length}
-                    </span>
-                  )}
-                </div>
-                <ChevronRight className="w-5 h-5 opacity-30" />
-              </Link>
-
-              <Link
-                href="/search"
-                className="group flex items-center gap-4 p-4 rounded-xl glass hover:bg-white/10 transition-all"
-              >
-                <Search className="w-5 h-5 opacity-50" />
-                <div className="flex-1 text-left">
-                  <h3 className="font-semibold">Search</h3>
-                </div>
-                <ChevronRight className="w-5 h-5 opacity-30" />
-              </Link>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="px-4 py-8 text-center text-sm opacity-60">
-        <p>Made by Saksham More</p>
-      </footer>
+      </main>
     </div>
   );
 }
