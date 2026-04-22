@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { fetchUserData, updateUserData, getUserId } from "@/lib/store-utils";
+import { fetchUserData, updateUserData, getUserId, saveToLocalStorage, loadFromLocalStorage } from "@/lib/store-utils";
 
 // Helper function to generate unique IDs
 const generateId = (): string => {
@@ -502,6 +502,27 @@ export const useStore = create<StoreState>((set, get) => ({
           }
         } catch (error) {
           console.error('Error syncing from DB:', error);
+          // Fallback to localStorage if MongoDB fails
+          console.log('Falling back to localStorage backup');
+          const localData = loadFromLocalStorage();
+          if (localData) {
+            set({
+              bookmarks: localData.bookmarks || [],
+              mistakes: localData.mistakes || [],
+              examState: localData.examState || {
+                isActive: false,
+                questions: [],
+                currentQuestion: 0,
+                answers: {},
+                startTime: 0,
+                timeLimit: 60,
+              },
+              practiceProgress: localData.practiceProgress || {},
+              conceptProgress: localData.conceptProgress || {},
+              darkMode: localData.darkMode || false,
+              searchQuery: localData.searchQuery || "",
+            });
+          }
         }
       },
 
@@ -515,6 +536,19 @@ export const useStore = create<StoreState>((set, get) => ({
             const state = get();
             // Use authenticated user ID if available, otherwise fall back to localStorage ID
             const userId = state.user?.userId || getUserId();
+            
+            // Always save to localStorage as backup first
+            const dataToSave = {
+              bookmarks: state.bookmarks,
+              mistakes: state.mistakes,
+              examState: state.examState,
+              practiceProgress: state.practiceProgress,
+              conceptProgress: state.conceptProgress,
+              darkMode: state.darkMode,
+              searchQuery: state.searchQuery,
+            };
+            saveToLocalStorage(dataToSave);
+            
             console.log(`=== SYNC START ===`);
             console.log(`User ID: ${userId}`);
             console.log(`Authenticated user: ${state.user?.email || 'none'}`);
@@ -525,15 +559,7 @@ export const useStore = create<StoreState>((set, get) => ({
               conceptProgress: state.conceptProgress,
             });
             
-            const result = await updateUserData(userId, {
-              bookmarks: state.bookmarks,
-              mistakes: state.mistakes,
-              examState: state.examState,
-              practiceProgress: state.practiceProgress,
-              conceptProgress: state.conceptProgress,
-              darkMode: state.darkMode,
-              searchQuery: state.searchQuery,
-            });
+            const result = await updateUserData(userId, dataToSave);
             
             console.log('Sync to DB successful:', result);
             console.log(`=== SYNC COMPLETE ===`);
@@ -543,6 +569,7 @@ export const useStore = create<StoreState>((set, get) => ({
             console.error(`Error:`, error);
             console.error(`Error message:`, error instanceof Error ? error.message : 'Unknown');
             console.error(`Attempt ${retryCount + 1}/${maxRetries}`);
+            console.error(`Data saved to localStorage as backup`);
             retryCount++;
             
             if (retryCount < maxRetries) {
@@ -552,9 +579,9 @@ export const useStore = create<StoreState>((set, get) => ({
               await new Promise(resolve => setTimeout(resolve, delay));
               return attemptSync();
             } else {
-              console.error('Max retries reached. Sync failed.');
+              console.error('Max retries reached. Sync failed. Data preserved in localStorage.');
               set({ isSyncing: false });
-              throw error;
+              // Don't throw error - data is safe in localStorage
             }
           }
         };
