@@ -10,14 +10,17 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const userId = searchParams.get('userId');
     
+    console.log('GET /api/user - userId:', userId);
+    
     if (!userId) {
-      return NextResponse.json({ error: 'userId is required' }, { status: 400 });
+      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
     
     let user = await User.findOne({ userId });
     
     // Create user if doesn't exist
     if (!user) {
+      console.log('User not found for userId:', userId);
       user = await User.create({
         userId,
         bookmarks: [],
@@ -37,10 +40,11 @@ export async function GET(request: NextRequest) {
       });
     }
     
+    console.log('User found:', user.userId);
     return NextResponse.json(user);
   } catch (error) {
     console.error('Error fetching user:', error);
-    return NextResponse.json({ error: 'Failed to fetch user data' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch user' }, { status: 500 });
   }
 }
 
@@ -52,8 +56,12 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { userId, ...updateData } = body;
     
+    console.log('PUT /api/user - userId:', userId);
+    console.log('Update data keys:', Object.keys(updateData));
+    console.log('Concept progress keys:', Object.keys(updateData.conceptProgress || {}));
+    
     if (!userId) {
-      return NextResponse.json({ error: 'userId is required' }, { status: 400 });
+      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
     
     const user = await User.findOneAndUpdate(
@@ -62,9 +70,10 @@ export async function PUT(request: NextRequest) {
       { new: true, upsert: true }
     );
     
+    console.log('User updated successfully:', user?.userId);
     return NextResponse.json(user);
   } catch (error) {
     console.error('Error updating user:', error);
-    return NextResponse.json({ error: 'Failed to update user data' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to update user' }, { status: 500 });
   }
 }

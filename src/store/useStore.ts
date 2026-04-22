@@ -436,7 +436,13 @@ export const useStore = create<StoreState>((set, get) => ({
           const state = get();
           // Use authenticated user ID if available, otherwise fall back to localStorage ID
           const userId = state.user?.userId || getUserId();
-          await updateUserData(userId, {
+          console.log('Syncing to DB with userId:', userId);
+          console.log('Data to sync:', {
+            bookmarks: state.bookmarks,
+            mistakes: state.mistakes,
+            conceptProgress: state.conceptProgress,
+          });
+          const result = await updateUserData(userId, {
             bookmarks: state.bookmarks,
             mistakes: state.mistakes,
             examState: state.examState,
@@ -445,6 +451,7 @@ export const useStore = create<StoreState>((set, get) => ({
             darkMode: state.darkMode,
             searchQuery: state.searchQuery,
           });
+          console.log('Sync to DB successful:', result);
         } catch (error) {
           console.error('Error syncing to DB:', error);
         }
