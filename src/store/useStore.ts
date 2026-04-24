@@ -101,6 +101,7 @@ interface StoreState {
   isVideoWatched: (itemId: string) => boolean;
   isRequirementsMet: (itemId: string) => boolean;
   getOverallProgress: () => { learned: number; total: number; practiced: number };
+  getMarksPotential: () => { currentMarks: number; maxMarks: number; percentage: number };
 
   // Search
   searchQuery: string;
@@ -353,6 +354,25 @@ export const useStore = create<StoreState>((set, get) => ({
         const total = concepts.length;
         const practiced = concepts.filter((c) => c.practiced).length;
         return { learned, total, practiced };
+      },
+      getMarksPotential: () => {
+        const state = get();
+        // Import syllabus data to get marks weightage
+        // This is a simplified calculation - in production would import actual data
+        const learnedConcepts = Object.keys(state.conceptProgress).filter(
+          id => state.conceptProgress[id]?.learned
+        );
+        
+        // Assume average marks per concept is 6 (can be refined with actual data)
+        const currentMarks = learnedConcepts.length * 6;
+        const maxMarks = 100; // Total exam marks
+        const percentage = (currentMarks / maxMarks) * 100;
+        
+        return {
+          currentMarks,
+          maxMarks,
+          percentage: Math.min(100, percentage),
+        };
       },
       markHandwritten: (itemId, photo) =>
         set((state) => {

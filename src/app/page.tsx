@@ -8,12 +8,13 @@ import { syllabusData } from "@/data/syllabus";
 import DailyProgress from "@/components/DailyProgress";
 
 export default function Home() {
-  const { darkMode, toggleDarkMode, setSearchQuery, mistakes, getWeakTopics, practiceProgress, conceptProgress, getOverallProgress, logout, isSyncing, lastSyncedAt, justPassMode, toggleJustPassMode } = useStore();
+  const { darkMode, toggleDarkMode, setSearchQuery, mistakes, getWeakTopics, practiceProgress, conceptProgress, getOverallProgress, logout, isSyncing, lastSyncedAt, justPassMode, toggleJustPassMode, getMarksPotential } = useStore();
   const [searchInput, setSearchInput] = useState("");
   const [showExplore, setShowExplore] = useState(false);
 
   const weakTopics = getWeakTopics();
   const overallProgress = getOverallProgress();
+  const marksPotential = getMarksPotential();
 
   // Format last synced time
   const formatLastSynced = (timestamp: number | null) => {
@@ -196,21 +197,31 @@ export default function Home() {
           </Link>
         </div>
 
-        {/* Simple Progress */}
-        <div className="glass rounded-2xl p-6">
-          <h2 className="text-lg font-bold mb-4">Your Progress</h2>
+        {/* Marks Potential - EXAM FOCUSED */}
+        <div className="glass rounded-2xl p-6 border-2 border-green/30">
+          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <Target className="w-5 h-5 text-green" />
+            Marks Potential
+          </h2>
           <div className="grid grid-cols-2 gap-4">
             <div className="text-center p-4 bg-white/5 rounded-xl">
-              <div className="text-3xl font-bold text-orange">{overallProgress.learned}</div>
-              <div className="text-sm opacity-70">Concepts learned</div>
-              <div className="text-xs opacity-50">of {totalConcepts} total</div>
+              <div className="text-3xl font-bold text-green">{marksPotential.currentMarks}</div>
+              <div className="text-sm opacity-70">Marks you can score</div>
+              <div className="text-xs opacity-50">out of {marksPotential.maxMarks}</div>
             </div>
             <div className="text-center p-4 bg-white/5 rounded-xl">
-              <div className="text-3xl font-bold text-ocean">{totalPracticeProgress.correct}</div>
-              <div className="text-sm opacity-70">Questions correct</div>
-              <div className="text-xs opacity-50">{practicePercentage.toFixed(0)}% accuracy</div>
+              <div className="text-3xl font-bold text-ocean">{marksPotential.percentage.toFixed(0)}%</div>
+              <div className="text-sm opacity-70">Exam potential</div>
+              <div className="text-xs opacity-50">based on learned topics</div>
             </div>
           </div>
+          {marksPotential.percentage < 50 && (
+            <div className="mt-4 p-3 rounded-lg bg-red/10 border-l-4 border-red">
+              <p className="text-sm text-red font-semibold">
+                ⚠️ You're losing {marksPotential.maxMarks - marksPotential.currentMarks} marks. Focus on high-importance topics.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Daily Progress */}
