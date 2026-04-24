@@ -147,6 +147,44 @@ export default function LearnPage() {
               </div>
             )}
 
+            {/* Exam Writing Guidelines */}
+            {selectedConcept.examWritingGuidelines && (
+              <div className="glass p-4 mb-6 border-2 border-orange/30">
+                <h3 className="font-semibold mb-3 flex items-center gap-2 text-orange">
+                  <Target className="w-4 h-4" />
+                  How to write in exam
+                </h3>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <span className="font-semibold opacity-70">Ideal format:</span>
+                    <p className="opacity-90">{selectedConcept.examWritingGuidelines.idealFormat}</p>
+                  </div>
+                  <div>
+                    <span className="font-semibold opacity-70">Step marking:</span>
+                    <p className="opacity-90">{selectedConcept.examWritingGuidelines.stepMarking}</p>
+                  </div>
+                  <div>
+                    <span className="font-semibold opacity-70">Keywords examiner expects:</span>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {selectedConcept.examWritingGuidelines.keywords.map((keyword, i) => (
+                        <span key={i} className="px-2 py-0.5 rounded-full bg-orange/20 text-orange text-xs">
+                          {keyword}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="font-semibold opacity-70">Common mistakes:</span>
+                    <ul className="list-disc list-inside opacity-90 mt-1">
+                      {selectedConcept.examWritingGuidelines.commonMistakes.map((mistake, i) => (
+                        <li key={i}>{mistake}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="glass p-4 mb-6">
               <h3 className="font-semibold mb-3">Ask AI Tutor</h3>
               
