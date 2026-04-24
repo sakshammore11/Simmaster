@@ -12,6 +12,7 @@ export default function ExamPage() {
   const [currentAnswer, setCurrentAnswer] = useState<string>("");
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
+  const [customTime, setCustomTime] = useState<number>(30);
 
   useEffect(() => {
     if (examState.isActive && examState.timeLimit > 0) {
@@ -27,7 +28,7 @@ export default function ExamPage() {
 
   const handleStartExam = () => {
     const questions = pyqData.map((pyq) => pyq.id);
-    startExam(questions, 30); // 30 minutes exam
+    startExam(questions, customTime); // Use custom time
   };
 
   const handleSubmitAnswer = () => {
@@ -80,17 +81,13 @@ export default function ExamPage() {
             <Clock className="w-16 h-16 mx-auto mb-6 text-orange" />
             <h1 className="text-3xl md:text-4xl font-bold mb-4">Exam Mode</h1>
             <p className="text-lg opacity-70 mb-8">
-              Test your knowledge with PYQ-based mock tests. You'll have 30 minutes to answer all questions.
+              Test your knowledge with PYQ-based mock tests.
             </p>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               <div className="glass p-4">
                 <div className="text-2xl font-bold">{pyqData.length}</div>
                 <div className="text-sm opacity-70">Questions</div>
-              </div>
-              <div className="glass p-4">
-                <div className="text-2xl font-bold">30</div>
-                <div className="text-sm opacity-70">Minutes</div>
               </div>
               <div className="glass p-4">
                 <div className="text-2xl font-bold">
@@ -101,6 +98,52 @@ export default function ExamPage() {
               <div className="glass p-4">
                 <div className="text-2xl font-bold">5</div>
                 <div className="text-sm opacity-70">Units</div>
+              </div>
+              <div className="glass p-4">
+                <div className="text-2xl font-bold">{customTime}</div>
+                <div className="text-sm opacity-70">Minutes</div>
+              </div>
+            </div>
+
+            {/* Time Input */}
+            <div className="mb-8">
+              <label className="block text-sm opacity-70 mb-2">Set exam time (minutes)</label>
+              <div className="flex items-center justify-center gap-4">
+                <button
+                  onClick={() => setCustomTime(Math.max(5, customTime - 5))}
+                  className="w-10 h-10 rounded-full glass hover:bg-white/10 transition-colors font-bold"
+                >
+                  -
+                </button>
+                <input
+                  type="number"
+                  value={customTime}
+                  onChange={(e) => setCustomTime(Math.max(5, parseInt(e.target.value) || 5))}
+                  className="w-24 text-center text-2xl font-bold bg-white/10 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-orange/50"
+                  min="5"
+                  max="180"
+                />
+                <button
+                  onClick={() => setCustomTime(Math.min(180, customTime + 5))}
+                  className="w-10 h-10 rounded-full glass hover:bg-white/10 transition-colors font-bold"
+                >
+                  +
+                </button>
+              </div>
+              <div className="flex gap-2 mt-3 justify-center">
+                {[15, 30, 45, 60, 90, 120].map((time) => (
+                  <button
+                    key={time}
+                    onClick={() => setCustomTime(time)}
+                    className={`px-3 py-1 rounded-full text-sm transition-all ${
+                      customTime === time
+                        ? "bg-gradient-to-r from-orange to-ocean text-white"
+                        : "glass hover:bg-white/10"
+                    }`}
+                  >
+                    {time}m
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -179,19 +222,31 @@ export default function ExamPage() {
   return (
     <div className="min-h-screen px-4 py-8">
       <div className="max-w-4xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <Clock className="w-5 h-5 text-orange" />
-            <span className="font-semibold">
-              {Math.max(0, timeRemaining).toFixed(1)} minutes remaining
-            </span>
+        {/* Timer Header - Fixed at top */}
+        <div className="sticky top-0 z-50 glass border-b border-white/10 px-4 py-3 mb-6 rounded-xl">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Clock className={`w-5 h-5 ${timeRemaining < 5 ? 'text-red-500 animate-pulse' : 'text-orange'}`} />
+              <span className={`font-semibold text-lg ${timeRemaining < 5 ? 'text-red-500' : ''}`}>
+                {Math.max(0, timeRemaining).toFixed(1)} min remaining
+              </span>
+            </div>
+            <div className="opacity-70">
+              Question {examState.currentQuestion + 1} of {examState.questions.length}
+            </div>
           </div>
-          <div className="opacity-70">
-            Question {examState.currentQuestion + 1} of {examState.questions.length}
+          {/* Progress Bar */}
+          <div className="w-full h-2 bg-white/10 rounded-full mt-3 overflow-hidden">
+            <div
+              className={`h-full transition-all duration-300 ${timeRemaining < 5 ? 'bg-red-500' : 'bg-gradient-to-r from-orange to-ocean'}`}
+              style={{
+                width: `${(timeRemaining / examState.timeLimit) * 100}%`,
+              }}
+            />
           </div>
         </div>
 
-        {/* Progress Bar */}
+        {/* Question Progress Bar */}
         <div className="w-full h-2 bg-white/10 rounded-full mb-8 overflow-hidden">
           <div
             className="h-full bg-gradient-to-r from-orange to-ocean transition-all duration-300"
