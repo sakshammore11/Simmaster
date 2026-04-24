@@ -203,7 +203,7 @@ export default function Home() {
         <DailyProgress conceptProgress={conceptProgress} />
 
         {/* Simple Navigation */}
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <Link href="/learn" className="glass rounded-xl p-4 hover:border-orange/50 transition-all text-center">
             <BookOpen className="w-6 h-6 mx-auto mb-2 text-orange" />
             <div className="text-sm font-medium">Learn</div>
@@ -213,6 +213,11 @@ export default function Home() {
             <Calculator className="w-6 h-6 mx-auto mb-2 text-ocean" />
             <div className="text-sm font-medium">Practice</div>
             <div className="text-xs opacity-50">Solve problems</div>
+          </Link>
+          <Link href="/formulas" className="glass rounded-xl p-4 hover:border-yellow/50 transition-all text-center">
+            <Lightbulb className="w-6 h-6 mx-auto mb-2 text-yellow" />
+            <div className="text-sm font-medium">Formulas</div>
+            <div className="text-xs opacity-50">Memorize</div>
           </Link>
           <Link href="/exam" className="glass rounded-xl p-4 hover:border-purple/50 transition-all text-center">
             <Clock className="w-6 h-6 mx-auto mb-2 text-purple" />
