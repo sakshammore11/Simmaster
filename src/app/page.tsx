@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { BookOpen, Calculator, Clock, Target, Lightbulb, AlertCircle, Search, Moon, Sun, Bookmark, ChevronRight, Play, ArrowRight, CheckCircle, Circle, LogOut, Cloud, CloudOff, RefreshCw } from "lucide-react";
+import { BookOpen, Calculator, Clock, Target, Lightbulb, AlertCircle, Search, Moon, Sun, Bookmark, ChevronRight, Play, ArrowRight, CheckCircle, Circle, LogOut, Cloud, CloudOff, RefreshCw, AlertTriangle } from "lucide-react";
 import { useStore } from "@/store/useStore";
 import { syllabusData } from "@/data/syllabus";
 import DailyProgress from "@/components/DailyProgress";
@@ -217,26 +217,46 @@ export default function Home() {
         <DailyProgress conceptProgress={conceptProgress} />
 
         {/* Simple Navigation */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <Link href="/learn" className="glass rounded-xl p-4 hover:border-orange/50 transition-all text-center">
-            <BookOpen className="w-6 h-6 mx-auto mb-2 text-orange" />
-            <div className="text-sm font-medium">Learn</div>
-            <div className="text-xs opacity-50">Watch videos</div>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+          <Link
+            href="/learn"
+            className="glass-card p-4 hover:scale-[1.02] transition-all group"
+          >
+            <BookOpen className="w-6 h-6 mb-2 text-orange group-hover:scale-110 transition-transform" />
+            <div className="font-semibold">Learn</div>
+            <div className="text-xs opacity-70">Study concepts</div>
           </Link>
-          <Link href="/practice" className="glass rounded-xl p-4 hover:border-ocean/50 transition-all text-center">
-            <Calculator className="w-6 h-6 mx-auto mb-2 text-ocean" />
-            <div className="text-sm font-medium">Practice</div>
-            <div className="text-xs opacity-50">Solve problems</div>
+          <Link
+            href="/practice"
+            className="glass-card p-4 hover:scale-[1.02] transition-all group"
+          >
+            <Calculator className="w-6 h-6 mb-2 text-ocean group-hover:scale-110 transition-transform" />
+            <div className="font-semibold">Practice</div>
+            <div className="text-xs opacity-70">Solve questions</div>
           </Link>
-          <Link href="/formulas" className="glass rounded-xl p-4 hover:border-yellow/50 transition-all text-center">
-            <Lightbulb className="w-6 h-6 mx-auto mb-2 text-yellow" />
-            <div className="text-sm font-medium">Formulas</div>
-            <div className="text-xs opacity-50">Memorize</div>
+          <Link
+            href="/formulas"
+            className="glass-card p-4 hover:scale-[1.02] transition-all group"
+          >
+            <Lightbulb className="w-6 h-6 mb-2 text-yellow group-hover:scale-110 transition-transform" />
+            <div className="font-semibold">Formulas</div>
+            <div className="text-xs opacity-70">Memorize</div>
           </Link>
-          <Link href="/exam" className="glass rounded-xl p-4 hover:border-purple/50 transition-all text-center">
-            <Clock className="w-6 h-6 mx-auto mb-2 text-purple" />
-            <div className="text-sm font-medium">Exam</div>
-            <div className="text-xs opacity-50">Test yourself</div>
+          <Link
+            href="/exam"
+            className="glass-card p-4 hover:scale-[1.02] transition-all group"
+          >
+            <Target className="w-6 h-6 mb-2 text-red group-hover:scale-110 transition-transform" />
+            <div className="font-semibold">Exam</div>
+            <div className="text-xs opacity-70">Test yourself</div>
+          </Link>
+          <Link
+            href="/panic"
+            className="glass-card p-4 hover:scale-[1.02] transition-all group border-2 border-red/50 bg-gradient-to-br from-red/10 to-orange/10"
+          >
+            <AlertTriangle className="w-6 h-6 mb-2 text-red group-hover:scale-110 transition-transform" />
+            <div className="font-semibold text-red">Panic</div>
+            <div className="text-xs opacity-70">1-day prep</div>
           </Link>
         </div>
       </main>

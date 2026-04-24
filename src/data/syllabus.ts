@@ -440,6 +440,18 @@ export const syllabusData: Unit[] = [
         whenToUse: "Generating exponential random variates",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        importanceScore: 85,
+        probabilityOfAppearance: "High",
+        marksWeightage: 6,
+        lastAskedYears: ["2023", "2024"],
+        questionPatterns: ["Generate exponential variate", "Calculate inter-arrival time", "Combine with Poisson"],
+        examinerStyleNotes: "Always numerical. Must show formula and calculation steps.",
+        examWritingGuidelines: {
+          idealFormat: "Given → Formula → Substitution → Calculation → Answer",
+          stepMarking: "Given (1 mark) → Formula (1 mark) → Calculation (3 marks) → Answer (1 mark)",
+          keywords: ["exponential variate", "inverse transform", "lambda", "uniform random"],
+          commonMistakes: ["Wrong formula sign", "Calculation errors", "Not showing steps"]
+        },
         youtubeUrl: "https://www.youtube.com/watch?v=l6vCalylPvQ",
       },
       {
