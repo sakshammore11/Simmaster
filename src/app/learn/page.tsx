@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Bookmark, MessageCircle, ChevronRight, Play, ChevronDown, Calculator, Baby, GraduationCap } from "lucide-react";
+import { ArrowLeft, Bookmark, MessageCircle, ChevronRight, Play, ChevronDown, Calculator, Baby, GraduationCap, Target } from "lucide-react";
 import { syllabusData, type Concept } from "@/data/syllabus";
 import { useStore } from "@/store/useStore";
 import { getAIExplanation } from "@/services/aiTutor";
 import LearningRequirements from "@/components/LearningRequirements";
 
 export default function LearnPage() {
-  const { addBookmark, isBookmarked, removeBookmark, markConceptLearned, markConceptPracticed, conceptProgress, markHandwritten, removeHandwrittenPhoto, markVideoWatched, isVideoWatched, isRequirementsMet } = useStore();
+  const { addBookmark, isBookmarked, removeBookmark, markConceptLearned, markConceptPracticed, conceptProgress, markHandwritten, removeHandwrittenPhoto, markVideoWatched, isVideoWatched, isRequirementsMet, justPassMode } = useStore();
   const [selectedUnit, setSelectedUnit] = useState<number>(1);
   const [selectedConcept, setSelectedConcept] = useState<Concept | null>(null);
   const [aiExplanation, setAiExplanation] = useState<string>("");
@@ -19,6 +19,13 @@ export default function LearnPage() {
   const [simpleMode, setSimpleMode] = useState(false);
 
   const currentUnit = syllabusData.find((u) => u.id === selectedUnit);
+
+  // Filter concepts based on Just Pass Mode
+  const filteredConcepts = currentUnit?.concepts.filter(concept => {
+    if (!justPassMode) return true;
+    // In Just Pass Mode, only show high-importance concepts (score >= 70)
+    return (concept.importanceScore || 0) >= 70;
+  }) || [];
 
   const handleBookmark = (concept: Concept) => {
     if (isBookmarked(concept.id)) {
@@ -208,7 +215,7 @@ export default function LearnPage() {
     );
   }
 
-  const visibleConcepts = showAll ? currentUnit?.concepts : currentUnit?.concepts.slice(0, visibleCount);
+  const visibleConcepts = showAll ? filteredConcepts : filteredConcepts.slice(0, visibleCount);
 
   return (
     <div className="min-h-screen px-4 py-8">
@@ -247,10 +254,23 @@ export default function LearnPage() {
         {/* Unit Content */}
         {currentUnit && (
           <div className="animate-fade-in">
+            {/* Just Pass Mode Banner */}
+            {justPassMode && (
+              <div className="glass-card p-4 mb-6 border-2 border-orange/50 bg-gradient-to-r from-orange/10 to-ocean/10">
+                <div className="flex items-center gap-3">
+                  <Target className="w-6 h-6 text-orange" />
+                  <div>
+                    <h3 className="font-bold text-orange">Just Pass Mode ON</h3>
+                    <p className="text-sm opacity-70">Ignore the rest. This is enough to pass.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="glass-card p-5 mb-6">
               <h2 className="text-xl font-bold mb-1">{currentUnit.title}</h2>
               <p className="text-sm opacity-70">
-                {currentUnit.hours} Hours • {currentUnit.co} • {currentUnit.concepts.length} concepts
+                {currentUnit.hours} Hours • {currentUnit.co} • {justPassMode ? `${filteredConcepts.length} high-yield` : currentUnit.concepts.length} concepts
               </p>
             </div>
 
@@ -279,8 +299,32 @@ export default function LearnPage() {
                             Video
                           </span>
                         )}
+                        {concept.importanceScore && (
+                          <span className={`px-2 py-0.5 rounded-full text-xs ${
+                            concept.importanceScore >= 85 ? 'bg-red/20 text-red' :
+                            concept.importanceScore >= 70 ? 'bg-orange/20 text-orange' :
+                            'bg-green/20 text-green'
+                          }`}>
+                            {concept.importanceScore >= 85 ? '🔥 Critical' :
+                             concept.importanceScore >= 70 ? '⭐ Important' : '✓ Standard'}
+                          </span>
+                        )}
                       </div>
                       <p className="opacity-70 text-sm line-clamp-1">{concept.description}</p>
+                      {concept.importanceScore && (
+                        <div className="mt-2 flex items-center gap-2 text-xs">
+                          <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                            <div
+                              className={`h-full ${
+                                concept.importanceScore >= 85 ? 'bg-red' :
+                                concept.importanceScore >= 70 ? 'bg-orange' : 'bg-green'
+                              }`}
+                              style={{ width: `${concept.importanceScore}%` }}
+                            />
+                          </div>
+                          <span className="opacity-70">{concept.marksWeightage || 6} marks</span>
+                        </div>
+                      )}
                     </div>
                     <ChevronRight className="w-5 h-5 opacity-30 group-hover:opacity-100 group-hover:text-orange transition-all" />
                   </div>
@@ -289,7 +333,7 @@ export default function LearnPage() {
             </div>
 
             {/* Load More Button */}
-            {currentUnit.concepts.length > visibleCount && !showAll && (
+            {filteredConcepts.length > visibleCount && !showAll && (
               <button
                 onClick={() => setShowAll(true)}
                 className="w-full mt-4 py-3 rounded-xl glass hover:bg-white/10 transition-colors flex items-center justify-center gap-2"

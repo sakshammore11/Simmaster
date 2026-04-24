@@ -52,6 +52,8 @@ interface StoreState {
   // UI State
   darkMode: boolean;
   toggleDarkMode: () => void;
+  justPassMode: boolean;
+  toggleJustPassMode: () => void;
 
   // Bookmarks
   bookmarks: Bookmark[];
@@ -112,6 +114,8 @@ export const useStore = create<StoreState>((set, get) => ({
       // UI State
       darkMode: false,
       toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
+      justPassMode: false,
+      toggleJustPassMode: () => set((state) => ({ justPassMode: !state.justPassMode })),
 
       // Bookmarks
       bookmarks: [],
@@ -451,6 +455,7 @@ export const useStore = create<StoreState>((set, get) => ({
                   },
                   darkMode: newData?.darkMode ?? oldData.darkMode ?? false,
                   searchQuery: newData?.searchQuery || oldData.searchQuery || '',
+                  justPassMode: newData?.justPassMode ?? oldData.justPassMode ?? false,
                 };
                 
                 // Save merged data to new ID
@@ -498,6 +503,7 @@ export const useStore = create<StoreState>((set, get) => ({
               conceptProgress: data.conceptProgress || {},
               darkMode: data.darkMode || false,
               searchQuery: data.searchQuery || "",
+              justPassMode: data.justPassMode || false,
             });
           }
         } catch (error) {
@@ -521,6 +527,7 @@ export const useStore = create<StoreState>((set, get) => ({
               conceptProgress: localData.conceptProgress || {},
               darkMode: localData.darkMode || false,
               searchQuery: localData.searchQuery || "",
+              justPassMode: localData.justPassMode || false,
             });
           }
         }
@@ -546,6 +553,7 @@ export const useStore = create<StoreState>((set, get) => ({
               conceptProgress: state.conceptProgress,
               darkMode: state.darkMode,
               searchQuery: state.searchQuery,
+              justPassMode: state.justPassMode,
             };
             saveToLocalStorage(dataToSave);
             

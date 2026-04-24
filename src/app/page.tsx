@@ -8,7 +8,7 @@ import { syllabusData } from "@/data/syllabus";
 import DailyProgress from "@/components/DailyProgress";
 
 export default function Home() {
-  const { darkMode, toggleDarkMode, setSearchQuery, mistakes, getWeakTopics, practiceProgress, conceptProgress, getOverallProgress, logout, isSyncing, lastSyncedAt } = useStore();
+  const { darkMode, toggleDarkMode, setSearchQuery, mistakes, getWeakTopics, practiceProgress, conceptProgress, getOverallProgress, logout, isSyncing, lastSyncedAt, justPassMode, toggleJustPassMode } = useStore();
   const [searchInput, setSearchInput] = useState("");
   const [showExplore, setShowExplore] = useState(false);
 
@@ -103,6 +103,20 @@ export default function Home() {
           </h1>
 
           <div className="flex items-center gap-2">
+            {/* Just Pass Mode Toggle */}
+            <button
+              onClick={toggleJustPassMode}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                justPassMode
+                  ? "bg-gradient-to-r from-orange to-ocean text-white"
+                  : "glass hover:bg-white/10"
+              }`}
+              title="Just Pass Mode - Show only high-yield content"
+            >
+              <Target className="w-4 h-4" />
+              {justPassMode ? "Just Pass ON" : "Just Pass"}
+            </button>
+
             {/* Sync Status */}
             <div className="flex items-center gap-2 text-xs opacity-70" title="Data sync status">
               {isSyncing ? (

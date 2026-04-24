@@ -8,6 +8,19 @@ export interface Concept {
   formulaMeaning?: string;
   whenToUse?: string;
   youtubeUrl?: string;
+  // Exam Intelligence Fields
+  importanceScore?: number; // 0-100
+  probabilityOfAppearance?: "High" | "Medium" | "Low";
+  marksWeightage?: number; // Average marks when asked
+  lastAskedYears?: string[];
+  questionPatterns?: string[];
+  examinerStyleNotes?: string;
+  examWritingGuidelines?: {
+    idealFormat: string;
+    stepMarking: string;
+    keywords: string[];
+    commonMistakes: string[];
+  };
 }
 
 export interface Unit {
@@ -39,6 +52,18 @@ export const syllabusData: Unit[] = [
         description: "Kendall notation: A/B/c where A=arrival process, B=service time distribution, c=number of servers. Components: arrival process, service mechanism, queue discipline, system capacity.",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        importanceScore: 85,
+        probabilityOfAppearance: "High",
+        marksWeightage: 6,
+        lastAskedYears: ["2023", "2024"],
+        questionPatterns: ["Define Kendall notation", "Explain components of queuing system", "Identify queue type from notation"],
+        examinerStyleNotes: "Always asks to explain A/B/c notation. May ask to write notation for given scenario.",
+        examWritingGuidelines: {
+          idealFormat: "Definition → Notation explanation → Component breakdown → Example",
+          stepMarking: "Definition (2 marks) → Notation (2 marks) → Components (2 marks)",
+          keywords: ["Kendall notation", "arrival process", "service time distribution", "number of servers", "queue discipline"],
+          commonMistakes: ["Not explaining each component", "Missing example"]
+        },
         youtubeUrl: "https://www.youtube.com/watch?v=SqSUJ0UYWMQ",
       },
       {
@@ -47,6 +72,18 @@ export const syllabusData: Unit[] = [
         description: "Queue characteristics: arrival pattern, service pattern, number of servers, queue capacity, queue discipline (FIFO, LIFO, priority, SIRO). Performance measures: waiting time, queue length, utilization.",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        importanceScore: 75,
+        probabilityOfAppearance: "High",
+        marksWeightage: 6,
+        lastAskedYears: ["2023", "2024"],
+        questionPatterns: ["Explain queue characteristics", "Compare queue disciplines", "Define performance measures"],
+        examinerStyleNotes: "Often combined with numerical. May ask to compare FIFO vs LIFO.",
+        examWritingGuidelines: {
+          idealFormat: "List characteristics → Explain each → Give examples → Compare disciplines",
+          stepMarking: "Characteristics (2 marks) → Disciplines (2 marks) → Performance measures (2 marks)",
+          keywords: ["arrival pattern", "service pattern", "queue discipline", "FIFO", "LIFO", "utilization"],
+          commonMistakes: ["Not giving examples", "Missing performance measures"]
+        },
         youtubeUrl: "https://www.youtube.com/watch?v=Kw3OZBnuV2c",
       },
       {
@@ -55,6 +92,18 @@ export const syllabusData: Unit[] = [
         description: "Manual simulation of M/M/1 queue. Track: arrival time, service start, departure time, waiting time, queue length. Event scheduling approach.",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        importanceScore: 95,
+        probabilityOfAppearance: "High",
+        marksWeightage: 10,
+        lastAskedYears: ["2023", "2024"],
+        questionPatterns: ["Manual simulation table", "Calculate L, Lq, W, Wq", "Draw event diagram"],
+        examinerStyleNotes: "ALWAYS asks numerical on M/M/1. Must show simulation table. Often 10 marks.",
+        examWritingGuidelines: {
+          idealFormat: "Given data → Event table → Calculations → Final answers",
+          stepMarking: "Given data (2 marks) → Event table (4 marks) → Calculations (2 marks) → Final answers (2 marks)",
+          keywords: ["arrival time", "service time", "waiting time", "queue length", "utilization"],
+          commonMistakes: ["Not showing event table", "Wrong formula selection", "Calculation errors"]
+        },
         youtubeUrl: "https://www.youtube.com/watch?v=QppldN-t4pQ",
       },
       {
@@ -63,6 +112,18 @@ export const syllabusData: Unit[] = [
         description: "Simulation of multi-server queue. Server selection policy: shortest queue, cyclic, random. Track server status, queue dynamics.",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        importanceScore: 70,
+        probabilityOfAppearance: "Medium",
+        marksWeightage: 8,
+        lastAskedYears: ["2023", "2024"],
+        questionPatterns: ["Multi-server simulation table", "Server selection policy", "Compare with single server"],
+        examinerStyleNotes: "Less frequent than M/M/1 but still important. Focus on server selection.",
+        examWritingGuidelines: {
+          idealFormat: "Given data → Server selection → Event table → Results",
+          stepMarking: "Given data (2 marks) → Server selection (2 marks) → Event table (3 marks) → Results (1 mark)",
+          keywords: ["server selection", "shortest queue", "cyclic", "multi-server"],
+          commonMistakes: ["Wrong server selection", "Not tracking both servers"]
+        },
         youtubeUrl: "https://www.youtube.com/watch?v=m97e3XzxVh4",
       },
       {
@@ -189,6 +250,18 @@ export const syllabusData: Unit[] = [
         whenToUse: "Counting events in fixed time/space interval",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        importanceScore: 90,
+        probabilityOfAppearance: "High",
+        marksWeightage: 8,
+        lastAskedYears: ["2023", "2024"],
+        questionPatterns: ["Calculate probability of k events", "Find expected number", "Poisson process problems"],
+        examinerStyleNotes: "Very high frequency. Always numerical. Must know formula by heart.",
+        examWritingGuidelines: {
+          idealFormat: "Given → Formula → Substitution → Calculation → Answer",
+          stepMarking: "Given (1 mark) → Formula (2 marks) → Calculation (3 marks) → Answer (2 marks)",
+          keywords: ["Poisson distribution", "lambda", "probability", "expected value"],
+          commonMistakes: ["Wrong formula", "Calculation errors", "Not showing steps"]
+        },
         youtubeUrl: "https://www.youtube.com/watch?v=jmqZG6roVqU",
       },
       {
@@ -207,6 +280,18 @@ export const syllabusData: Unit[] = [
         whenToUse: "Time between events, failure times",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        importanceScore: 88,
+        probabilityOfAppearance: "High",
+        marksWeightage: 8,
+        lastAskedYears: ["2023", "2024"],
+        questionPatterns: ["Calculate probability", "Find expected time", "Memoryless property proof"],
+        examinerStyleNotes: "Always paired with Poisson. Memoryless property is favorite theory question.",
+        examWritingGuidelines: {
+          idealFormat: "Given → Formula → Substitution → Answer",
+          stepMarking: "Given (1 mark) → Formula (2 marks) → Calculation (3 marks) → Answer (2 marks)",
+          keywords: ["exponential distribution", "memoryless property", "rate parameter"],
+          commonMistakes: ["Confusing λ with 1/λ", "Not showing memoryless property"]
+        },
         youtubeUrl: "https://www.youtube.com/watch?v=8qZilAKQM6s",
       },
       {
@@ -269,6 +354,18 @@ export const syllabusData: Unit[] = [
         whenToUse: "When full period needed",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        importanceScore: 80,
+        probabilityOfAppearance: "High",
+        marksWeightage: 6,
+        lastAskedYears: ["2023", "2024"],
+        questionPatterns: ["Generate random numbers", "Check full period conditions", "Hull-Dobell theorem"],
+        examinerStyleNotes: "Always numerical. Must show sequence generation. Hull-Dobell theorem is favorite theory.",
+        examWritingGuidelines: {
+          idealFormat: "Given → Formula → Sequence generation → Period check",
+          stepMarking: "Given (1 mark) → Formula (1 mark) → Generation (3 marks) → Period (1 mark)",
+          keywords: ["LCG", "period", "Hull-Dobell theorem", "random numbers"],
+          commonMistakes: ["Wrong mod operation", "Not checking period conditions"]
+        },
         youtubeUrl: "https://www.youtube.com/watch?v=LUusa5Mhx_g",
       },
       {
@@ -311,6 +408,18 @@ export const syllabusData: Unit[] = [
         whenToUse: "When inverse CDF is available",
         pyqTag: true,
         pyqYears: ["2023", "2024"],
+        importanceScore: 92,
+        probabilityOfAppearance: "High",
+        marksWeightage: 8,
+        lastAskedYears: ["2023", "2024"],
+        questionPatterns: ["Generate exponential variate", "Generate uniform variate", "Prove the technique"],
+        examinerStyleNotes: "Very high frequency. Always numerical. Must show inverse CDF derivation.",
+        examWritingGuidelines: {
+          idealFormat: "Given → Find CDF → Invert CDF → Generate variate",
+          stepMarking: "Given (1 mark) → CDF (2 marks) → Inverse (2 marks) → Generation (3 marks)",
+          keywords: ["inverse transform", "CDF", "uniform random number", "variate generation"],
+          commonMistakes: ["Wrong CDF", "Incorrect inversion", "Not showing steps"]
+        },
         youtubeUrl: "https://www.youtube.com/watch?v=9ixzzPQWuAY",
       },
       {
