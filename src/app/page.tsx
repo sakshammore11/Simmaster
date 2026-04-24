@@ -219,16 +219,66 @@ export default function Home() {
             <div className="text-center p-4 bg-white/5 rounded-xl">
               <div className="text-3xl font-bold text-ocean">{marksPotential.percentage.toFixed(0)}%</div>
               <div className="text-sm opacity-70">Exam potential</div>
-              <div className="text-xs opacity-50">based on learned topics</div>
+              <div className="text-xs opacity-50">requires full mastery</div>
             </div>
           </div>
           {marksPotential.percentage < 50 && (
             <div className="mt-4 p-3 rounded-lg bg-red/10 border-l-4 border-red">
               <p className="text-sm text-red font-semibold">
-                ⚠️ You're losing {marksPotential.maxMarks - marksPotential.currentMarks} marks. Focus on high-importance topics.
+                ⚠️ You're losing {marksPotential.maxMarks - marksPotential.currentMarks} marks. Complete all requirements per concept.
               </p>
             </div>
           )}
+          <div className="mt-3 p-3 rounded-lg bg-yellow/10 border-l-4 border-yellow">
+            <p className="text-xs text-yellow font-semibold">
+              💡 To score marks: Learn + Practice + Handwritten Notes + Watch Video per concept
+            </p>
+          </div>
+        </div>
+
+        {/* Good Study Practices */}
+        <div className="glass rounded-2xl p-6 border-2 border-ocean/30">
+          <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+            <BookOpen className="w-5 h-5 text-ocean" />
+            Good Study Practices
+          </h2>
+          <div className="space-y-3">
+            <div className="flex items-start gap-3 p-3 bg-white/5 rounded-lg">
+              <div className="w-8 h-8 rounded-full bg-green/20 text-green flex items-center justify-center font-bold text-sm flex-shrink-0">1</div>
+              <div>
+                <div className="font-semibold text-green">Active Recall</div>
+                <div className="text-sm opacity-70">Test yourself instead of re-reading. Use Formulas page to recall from memory.</div>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 bg-white/5 rounded-lg">
+              <div className="w-8 h-8 rounded-full bg-ocean/20 text-ocean flex items-center justify-center font-bold text-sm flex-shrink-0">2</div>
+              <div>
+                <div className="font-semibold text-ocean">Spaced Repetition</div>
+                <div className="text-sm opacity-70">Review formulas at increasing intervals. System tracks mastery levels.</div>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 bg-white/5 rounded-lg">
+              <div className="w-8 h-8 rounded-full bg-orange/20 text-orange flex items-center justify-center font-bold text-sm flex-shrink-0">3</div>
+              <div>
+                <div className="font-semibold text-orange">Pattern Recognition</div>
+                <div className="text-sm opacity-70">Train your brain to identify question types instantly. Use Patterns page.</div>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 bg-white/5 rounded-lg">
+              <div className="w-8 h-8 rounded-full bg-purple/20 text-purple flex items-center justify-center font-bold text-sm flex-shrink-0">4</div>
+              <div>
+                <div className="font-semibold text-purple">Handwritten Notes</div>
+                <div className="text-sm opacity-70">Writing by hand improves retention. Upload notes for each concept.</div>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 bg-white/5 rounded-lg">
+              <div className="w-8 h-8 rounded-full bg-red/20 text-red flex items-center justify-center font-bold text-sm flex-shrink-0">5</div>
+              <div>
+                <div className="font-semibold text-red">Mistake Analysis</div>
+                <div className="text-sm opacity-70">Review mistakes to avoid repeating them. Check Mistakes page regularly.</div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Daily Progress */}

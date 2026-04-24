@@ -362,21 +362,50 @@ export const useStore = create<StoreState>((set, get) => ({
       },
       getMarksPotential: () => {
         const state = get();
-        // Import syllabus data to get marks weightage
-        // This is a simplified calculation - in production would import actual data
         const learnedConcepts = Object.keys(state.conceptProgress).filter(
           id => state.conceptProgress[id]?.learned
         );
+        const practicedConcepts = Object.keys(state.conceptProgress).filter(
+          id => state.conceptProgress[id]?.practiced
+        );
 
-        // Assume average marks per concept is 6 (can be refined with actual data)
-        const currentMarks = learnedConcepts.length * 6;
-        const maxMarks = 100; // Total exam marks
+        // STRICT calculation - realistic exam scoring:
+        // - Only count concepts that are learned, practiced, handwritten, AND video watched
+        // - Base 2 marks per concept (50 marks / ~25 concepts)
+        // - Penalty for mistakes on that concept (-0.5 marks per mistake)
+        // - Bonus for strong formula mastery (+0.5 marks)
+        const fullyMasteredConcepts = Object.keys(state.conceptProgress).filter(
+          id => state.conceptProgress[id]?.learned &&
+               state.conceptProgress[id]?.practiced &&
+               state.conceptProgress[id]?.handwritten &&
+               state.conceptProgress[id]?.videoWatched
+        );
+
+        let currentMarks = 0;
+        fullyMasteredConcepts.forEach(id => {
+          const progress = state.conceptProgress[id];
+          let marks = 2; // Base marks per concept (reduced for realism)
+
+          // Bonus for strong formula mastery
+          const relatedFormulas = Object.keys(state.formulaMastery).filter(
+            fid => state.formulaMastery[fid]?.strength === "Strong"
+          );
+          if (relatedFormulas.length > 0) marks += 0.5;
+
+          // Penalty for mistakes on this concept
+          const mistakesOnConcept = state.mistakes.filter(m => m.conceptId === id).length;
+          marks -= mistakesOnConcept * 0.5;
+
+          currentMarks += Math.max(0, marks); // Don't go negative
+        });
+
+        const maxMarks = 50; // Total exam marks
         const percentage = (currentMarks / maxMarks) * 100;
 
         return {
-          currentMarks,
+          currentMarks: Math.round(currentMarks * 10) / 10,
           maxMarks,
-          percentage: Math.min(100, percentage),
+          percentage: Math.min(100, Math.round(percentage * 10) / 10),
         };
       },
       formulaMastery: {},
