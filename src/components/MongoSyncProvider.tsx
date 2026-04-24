@@ -55,6 +55,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         conceptProgress: localData.conceptProgress || {},
         darkMode: localData.darkMode || false,
         searchQuery: localData.searchQuery || "",
+        justPassMode: localData.justPassMode || false,
+        formulaMastery: localData.formulaMastery || {},
       });
     }
   }, []);
@@ -79,6 +81,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   const conceptProgress = useStore((state) => state.conceptProgress);
   const darkMode = useStore((state) => state.darkMode);
   const searchQuery = useStore((state) => state.searchQuery);
+  const justPassMode = useStore((state) => state.justPassMode);
+  const formulaMastery = useStore((state) => state.formulaMastery);
 
   // Save to localStorage on every state change
   useEffect(() => {
@@ -91,14 +95,16 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       conceptProgress: state.conceptProgress,
       darkMode: state.darkMode,
       searchQuery: state.searchQuery,
+      justPassMode: state.justPassMode,
+      formulaMastery: state.formulaMastery,
     };
     saveToLocalStorage(dataToSave);
-  }, [bookmarks, mistakes, examState, practiceProgress, conceptProgress, darkMode, searchQuery]);
+  }, [bookmarks, mistakes, examState, practiceProgress, conceptProgress, darkMode, searchQuery, justPassMode, formulaMastery]);
 
   // Debounced sync to MongoDB on any state change
   useEffect(() => {
     if (!isAuthenticated) return;
-    
+
     if (syncTimeoutRef.current) {
       clearTimeout(syncTimeoutRef.current);
     }
@@ -112,7 +118,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         clearTimeout(syncTimeoutRef.current);
       }
     };
-  }, [bookmarks, mistakes, examState, practiceProgress, conceptProgress, darkMode, searchQuery, syncToDB, isAuthenticated]);
+  }, [bookmarks, mistakes, examState, practiceProgress, conceptProgress, darkMode, searchQuery, justPassMode, formulaMastery, syncToDB, isAuthenticated]);
 
   // Sync on page unload to prevent data loss
   useEffect(() => {
@@ -122,7 +128,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
       // Use navigator.sendBeacon for reliable sync on page unload
       const state = useStore.getState();
       const userId = state.user?.userId || localStorage.getItem('simmaster-user-id');
-      
+
       if (userId) {
         const data = {
           userId,
@@ -133,8 +139,10 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
           conceptProgress: state.conceptProgress,
           darkMode: state.darkMode,
           searchQuery: state.searchQuery,
+          justPassMode: state.justPassMode,
+          formulaMastery: state.formulaMastery,
         };
-        
+
         // Use sendBeacon for reliable sync during page unload
         navigator.sendBeacon('/api/user', new Blob([JSON.stringify(data)], {
           type: 'application/json',
@@ -149,13 +157,13 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     };
   }, [isAuthenticated]);
 
-  useEffect(() => {
-    // Redirect to login if not authenticated (except on login/signup pages)
-    const path = window.location.pathname;
-    if (!isAuthenticated && path !== '/login' && path !== '/signup') {
-      router.push('/login');
-    }
-  }, [isAuthenticated, router]);
+  // REMOVED: Auth gate - app should work without login (localStorage-first)
+  // useEffect(() => {
+  //   const path = window.location.pathname;
+  //   if (!isAuthenticated && path !== '/login' && path !== '/signup') {
+  //     router.push('/login');
+  //   }
+  // }, [isAuthenticated, router]);
 
   return <>{children}</>;
 }

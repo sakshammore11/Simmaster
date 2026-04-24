@@ -54,6 +54,8 @@ interface IUser extends Document {
   conceptProgress: Record<string, ConceptProgress>;
   darkMode: boolean;
   searchQuery: string;
+  justPassMode: boolean;
+  formulaMastery: Record<string, { strength: "Weak" | "Medium" | "Strong"; lastReviewed: number; reviewCount: number }>;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -113,6 +115,8 @@ const UserSchema = new Schema<IUser>(
     conceptProgress: { type: Object, default: {} },
     darkMode: { type: Boolean, default: false },
     searchQuery: { type: String, default: "" },
+    justPassMode: { type: Boolean, default: false },
+    formulaMastery: { type: Object, default: {} },
   },
   {
     timestamps: true,

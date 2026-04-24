@@ -37,6 +37,8 @@ export async function GET(request: NextRequest) {
         conceptProgress: {},
         darkMode: false,
         searchQuery: '',
+        justPassMode: false,
+        formulaMastery: {},
       });
     }
     

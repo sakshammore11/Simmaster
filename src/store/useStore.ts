@@ -588,10 +588,13 @@ export const useStore = create<StoreState>((set, get) => ({
           const userId = authenticatedUserId || localStorageUserId;
           const data = await fetchUserData(userId);
           if (data) {
-            set({
-              bookmarks: data.bookmarks || [],
-              mistakes: data.mistakes || [],
-              examState: data.examState || {
+            // CRITICAL: Deep merge with localStorage to prevent data loss
+            // localStorage takes priority to preserve user progress
+            const localData = loadFromLocalStorage();
+            const mergedData = {
+              bookmarks: localData?.bookmarks || data.bookmarks || [],
+              mistakes: localData?.mistakes || data.mistakes || [],
+              examState: localData?.examState || data.examState || {
                 isActive: false,
                 questions: [],
                 currentQuestion: 0,
@@ -599,11 +602,32 @@ export const useStore = create<StoreState>((set, get) => ({
                 startTime: 0,
                 timeLimit: 60,
               },
-              practiceProgress: data.practiceProgress || {},
-              conceptProgress: data.conceptProgress || {},
-              darkMode: data.darkMode || false,
-              searchQuery: data.searchQuery || "",
-              justPassMode: data.justPassMode || false,
+              practiceProgress: {
+                ...data.practiceProgress,
+                ...localData?.practiceProgress,
+              },
+              conceptProgress: {
+                ...data.conceptProgress,
+                ...localData?.conceptProgress,
+              },
+              darkMode: localData?.darkMode ?? data.darkMode ?? false,
+              searchQuery: localData?.searchQuery || data.searchQuery || "",
+              justPassMode: localData?.justPassMode ?? data.justPassMode ?? false,
+              formulaMastery: {
+                ...data.formulaMastery,
+                ...localData?.formulaMastery,
+              },
+            };
+            set({
+              bookmarks: mergedData.bookmarks,
+              mistakes: mergedData.mistakes,
+              examState: mergedData.examState,
+              practiceProgress: mergedData.practiceProgress,
+              conceptProgress: mergedData.conceptProgress,
+              darkMode: mergedData.darkMode,
+              searchQuery: mergedData.searchQuery,
+              justPassMode: mergedData.justPassMode,
+              formulaMastery: mergedData.formulaMastery,
             });
           }
         } catch (error) {
@@ -628,6 +652,7 @@ export const useStore = create<StoreState>((set, get) => ({
               darkMode: localData.darkMode || false,
               searchQuery: localData.searchQuery || "",
               justPassMode: localData.justPassMode || false,
+              formulaMastery: localData.formulaMastery || {},
             });
           }
         }
@@ -654,6 +679,7 @@ export const useStore = create<StoreState>((set, get) => ({
               darkMode: state.darkMode,
               searchQuery: state.searchQuery,
               justPassMode: state.justPassMode,
+              formulaMastery: state.formulaMastery,
             };
             saveToLocalStorage(dataToSave);
             
