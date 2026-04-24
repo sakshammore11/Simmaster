@@ -7,6 +7,12 @@ export interface PYQStep {
   calculation?: string;
   finalAnswer?: string;
   whyThisStep?: string;
+  // Step-Locked Numerical Engine fields
+  givenData?: string;
+  identifyModel?: string;
+  triggerCondition?: string;
+  commonTrap?: string;
+  shortcutMethod?: string;
 }
 
 export interface PYQ {

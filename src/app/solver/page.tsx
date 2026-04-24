@@ -141,10 +141,22 @@ export default function SolverPage() {
 
                       {expandedSteps.has(step.step) && (
                         <div className="mt-4 ml-11 space-y-3 animate-fade-in">
-                          <p className="opacity-90">{step.explanation}</p>
+                          {/* Step-Locked Structure */}
+                          {step.givenData && (
+                            <div className="p-3 rounded-lg bg-green/10 border-l-4 border-green">
+                              <span className="text-sm font-semibold text-green">📋 Given Data: </span>
+                              <span className="opacity-90">{step.givenData}</span>
+                            </div>
+                          )}
+                          {step.identifyModel && (
+                            <div className="p-3 rounded-lg bg-ocean/10 border-l-4 border-ocean">
+                              <span className="text-sm font-semibold text-ocean">🎯 Identify Model/Distribution: </span>
+                              <span className="opacity-90">{step.identifyModel}</span>
+                            </div>
+                          )}
                           {step.formula && (
                             <div className="p-3 rounded-lg bg-black/5">
-                              <span className="text-sm opacity-70">Formula: </span>
+                              <span className="text-sm opacity-70">Formula Selection: </span>
                               <code className="font-semibold">{step.formula}</code>
                             </div>
                           )}
@@ -168,10 +180,29 @@ export default function SolverPage() {
                           )}
                           {step.whyThisStep && (
                             <div className="p-3 rounded-lg bg-ocean/10 border-l-4 border-ocean">
-                              <span className="text-sm font-semibold text-ocean">💡 Why this step? </span>
+                              <span className="text-sm font-semibold text-ocean">💡 Why this formula? </span>
                               <span className="opacity-90">{step.whyThisStep}</span>
                             </div>
                           )}
+                          {step.triggerCondition && (
+                            <div className="p-3 rounded-lg bg-yellow/10 border-l-4 border-yellow">
+                              <span className="text-sm font-semibold text-yellow">⚡ Trigger Condition: </span>
+                              <span className="opacity-90">{step.triggerCondition}</span>
+                            </div>
+                          )}
+                          {step.commonTrap && (
+                            <div className="p-3 rounded-lg bg-red/10 border-l-4 border-red">
+                              <span className="text-sm font-semibold text-red">⚠️ Common Trap: </span>
+                              <span className="opacity-90">{step.commonTrap}</span>
+                            </div>
+                          )}
+                          {step.shortcutMethod && (
+                            <div className="p-3 rounded-lg bg-purple/10 border-l-4 border-purple">
+                              <span className="text-sm font-semibold text-purple">⚡ Shortcut Method: </span>
+                              <span className="opacity-90">{step.shortcutMethod}</span>
+                            </div>
+                          )}
+                          <p className="opacity-90">{step.explanation}</p>
                         </div>
                       )}
                     </div>
