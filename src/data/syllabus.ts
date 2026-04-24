@@ -5,6 +5,7 @@ export interface Concept {
   pyqTag?: boolean;
   pyqYears?: string[];
   formula?: string;
+  formulaMeaning?: string;
   whenToUse?: string;
   youtubeUrl?: string;
 }

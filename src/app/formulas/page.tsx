@@ -3,17 +3,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Lightbulb, RotateCw, Bookmark } from "lucide-react";
-import { syllabusData } from "@/data/syllabus";
+import { formulasData, type Formula } from "@/data/formulas";
 import { useStore } from "@/store/useStore";
 import LearningRequirements from "@/components/LearningRequirements";
-
-interface FormulaCard {
-  id: string;
-  concept: string;
-  formula: string;
-  whenToUse: string;
-  unit: number;
-}
 
 export default function FormulasPage() {
   const { addBookmark, isBookmarked, removeBookmark, markHandwritten, removeHandwrittenPhoto, conceptProgress, markVideoWatched, isVideoWatched, isRequirementsMet } = useStore();
@@ -24,26 +16,10 @@ export default function FormulasPage() {
   const [showFormula, setShowFormula] = useState(false);
   const [memorizedFormulas, setMemorizedFormulas] = useState<Set<string>>(new Set());
 
-  // Extract formulas from syllabus
-  const allFormulas: FormulaCard[] = [];
-  syllabusData.forEach((unit) => {
-    unit.concepts.forEach((concept) => {
-      if (concept.formula) {
-        allFormulas.push({
-          id: concept.id,
-          concept: concept.title,
-          formula: concept.formula,
-          whenToUse: concept.whenToUse || "Refer to concept details",
-          unit: unit.id,
-        });
-      }
-    });
-  });
-
   const filteredFormulas =
-    selectedUnit === 0 ? allFormulas : allFormulas.filter((f) => f.unit === selectedUnit);
+    selectedUnit === 0 ? formulasData : formulasData.filter((f) => f.unit === selectedUnit);
 
-  const handleBookmark = (formula: FormulaCard) => {
+  const handleBookmark = (formula: Formula) => {
     if (isBookmarked(formula.id)) {
       removeBookmark(formula.id);
     } else {
@@ -189,9 +165,9 @@ export default function FormulasPage() {
                 <div className="p-4 rounded-lg bg-black/5 mb-6">
                   <div className="flex items-center gap-2 mb-2">
                     <Lightbulb className="w-4 h-4 text-ocean" />
-                    <span className="text-sm font-semibold text-ocean">When to use</span>
+                    <span className="text-sm font-semibold text-ocean">Meaning</span>
                   </div>
-                  <p className="text-sm opacity-90">{currentFormula.whenToUse}</p>
+                  <p className="text-sm opacity-90">{currentFormula.meaning}</p>
                 </div>
               )}
 
@@ -306,9 +282,9 @@ export default function FormulasPage() {
                     <div className="p-3 rounded-lg bg-black/5">
                       <div className="flex items-center gap-2 mb-1">
                         <Lightbulb className="w-4 h-4 text-ocean" />
-                        <span className="text-xs font-semibold text-ocean">When to use</span>
+                        <span className="text-xs font-semibold text-ocean">Meaning</span>
                       </div>
-                      <p className="text-xs opacity-90">{formula.whenToUse}</p>
+                      <p className="text-xs opacity-90">{formula.meaning}</p>
                     </div>
                   </div>
                 </div>
