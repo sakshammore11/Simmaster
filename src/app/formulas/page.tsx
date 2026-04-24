@@ -8,13 +8,15 @@ import { useStore } from "@/store/useStore";
 import LearningRequirements from "@/components/LearningRequirements";
 
 export default function FormulasPage() {
-  const { addBookmark, isBookmarked, removeBookmark, markHandwritten, removeHandwrittenPhoto, conceptProgress, markVideoWatched, isVideoWatched, isRequirementsMet } = useStore();
+  const { addBookmark, isBookmarked, removeBookmark, markHandwritten, removeHandwrittenPhoto, conceptProgress, markVideoWatched, isVideoWatched, isRequirementsMet, formulaMastery, updateFormulaMastery, getWeakFormulas } = useStore();
   const [selectedUnit, setSelectedUnit] = useState<number>(0);
   const [flippedCard, setFlippedCard] = useState<string | null>(null);
   const [memorizeMode, setMemorizeMode] = useState(false);
   const [currentFormulaIndex, setCurrentFormulaIndex] = useState(0);
   const [showFormula, setShowFormula] = useState(false);
-  const [memorizedFormulas, setMemorizedFormulas] = useState<Set<string>>(new Set());
+  const [activeRecallMode, setActiveRecallMode] = useState(false);
+  const [userAnswer, setUserAnswer] = useState("");
+  const [showResult, setShowResult] = useState(false);
 
   const filteredFormulas =
     selectedUnit === 0 ? formulasData : formulasData.filter((f) => f.unit === selectedUnit);
@@ -53,12 +55,13 @@ export default function FormulasPage() {
   };
 
   const handleMarkMemorized = (formulaId: string) => {
-    setMemorizedFormulas(prev => new Set([...prev, formulaId]));
+    updateFormulaMastery(formulaId, true);
     handleMemorizeNext();
   };
 
   const currentFormula = filteredFormulas[currentFormulaIndex];
-  const memorizeProgress = memorizedFormulas.size / filteredFormulas.length * 100;
+  const memorizedCount = Object.values(formulaMastery).filter(m => m.strength === "Strong").length;
+  const memorizeProgress = memorizedCount / filteredFormulas.length * 100;
 
   return (
     <div className="min-h-screen px-4 py-8">
@@ -87,6 +90,17 @@ export default function FormulasPage() {
             >
               <Lightbulb className="w-4 h-4" />
               {memorizeMode ? "Exit Memorize" : "Memorize Mode"}
+            </button>
+            <button
+              onClick={() => setActiveRecallMode(!activeRecallMode)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full transition-colors ${
+                activeRecallMode
+                  ? "bg-gradient-to-r from-red to-orange text-white"
+                  : "glass hover:bg-white/10"
+              }`}
+            >
+              <Lightbulb className="w-4 h-4" />
+              {activeRecallMode ? "Exit Recall" : "Active Recall"}
             </button>
             <button
               onClick={shuffleFormulas}
@@ -125,7 +139,7 @@ export default function FormulasPage() {
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm opacity-70">Memorization Progress</span>
-                <span className="text-sm font-semibold">{memorizedFormulas.size}/{filteredFormulas.length}</span>
+                <span className="text-sm font-semibold">{memorizedCount}/{filteredFormulas.length}</span>
               </div>
               <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
                 <div
@@ -184,7 +198,7 @@ export default function FormulasPage() {
                   onClick={() => handleMarkMemorized(currentFormula.id)}
                   className="px-6 py-3 rounded-full bg-gradient-to-r from-orange to-ocean text-white font-semibold hover:opacity-90 transition-opacity"
                 >
-                  {memorizedFormulas.has(currentFormula.id) ? "Memorized ✓" : "Mark as Memorized"}
+                  {formulaMastery[currentFormula.id]?.strength === "Strong" ? "Memorized ✓" : "Mark as Memorized"}
                 </button>
                 <button
                   onClick={handleMemorizeNext}
@@ -198,8 +212,109 @@ export default function FormulasPage() {
           </div>
         )}
 
+        {/* Active Recall Mode */}
+        {activeRecallMode && currentFormula && (
+          <div className="glass-card p-8 text-center animate-fade-in border-2 border-red/50 bg-gradient-to-r from-red/10 to-orange/10">
+            <h2 className="text-2xl font-bold mb-4 text-red">Active Recall Mode</h2>
+            <p className="opacity-70 mb-6">Type the formula from memory. No peeking!</p>
+
+            {!showResult ? (
+              <>
+                <div className="mb-6">
+                  <div className="text-lg font-semibold mb-4">{currentFormula.concept}</div>
+                  <input
+                    type="text"
+                    value={userAnswer}
+                    onChange={(e) => setUserAnswer(e.target.value)}
+                    placeholder="Type the formula here..."
+                    className="w-full px-4 py-3 rounded-xl bg-white/10 focus:outline-none focus:ring-2 focus:ring-red/50 text-center text-lg font-mono"
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter") {
+                        setShowResult(true);
+                        const isCorrect = userAnswer.toLowerCase().includes(currentFormula.formula.toLowerCase().replace(/\s/g, ''));
+                        updateFormulaMastery(currentFormula.id, isCorrect);
+                      }
+                    }}
+                  />
+                </div>
+
+                <div className="flex gap-3 justify-center">
+                  <button
+                    onClick={() => {
+                      setShowResult(true);
+                      const isCorrect = userAnswer.toLowerCase().includes(currentFormula.formula.toLowerCase().replace(/\s/g, ''));
+                      updateFormulaMastery(currentFormula.id, isCorrect);
+                    }}
+                    disabled={!userAnswer.trim()}
+                    className="px-6 py-3 rounded-full bg-gradient-to-r from-red to-orange text-white font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+                  >
+                    Check Answer
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowResult(true);
+                      updateFormulaMastery(currentFormula.id, false);
+                    }}
+                    className="px-6 py-3 rounded-full glass hover:bg-white/10 transition-colors"
+                  >
+                    I Don't Know
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="animate-fade-in">
+                <div className={`p-4 rounded-lg mb-4 border-l-4 ${
+                  userAnswer.toLowerCase().includes(currentFormula.formula.toLowerCase().replace(/\s/g, ''))
+                    ? "bg-green/10 border-green"
+                    : "bg-red/10 border-red"
+                }`}>
+                  <div className="text-lg font-semibold mb-2">
+                    {userAnswer.toLowerCase().includes(currentFormula.formula.toLowerCase().replace(/\s/g, ''))
+                      ? "✓ Correct!"
+                      : "✗ Incorrect"}
+                  </div>
+                  <div className="text-sm opacity-70">
+                    Your answer: {userAnswer || "(empty)"}
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-lg bg-white/10 mb-4">
+                  <div className="text-sm opacity-70 mb-2">Correct formula:</div>
+                  <code className="text-xl font-mono">{currentFormula.formula}</code>
+                </div>
+
+                <div className="p-4 rounded-lg bg-white/5 mb-4">
+                  <div className="text-sm opacity-70 mb-2">Meaning:</div>
+                  <p className="opacity-90">{currentFormula.meaning}</p>
+                </div>
+
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-sm opacity-70">Mastery:</span>
+                  <span className={`font-semibold ${
+                    formulaMastery[currentFormula.id]?.strength === "Strong" ? "text-green" :
+                    formulaMastery[currentFormula.id]?.strength === "Medium" ? "text-orange" : "text-red"
+                  }`}>
+                    {formulaMastery[currentFormula.id]?.strength || "Weak"}
+                  </span>
+                </div>
+
+                <button
+                  onClick={() => {
+                    handleMemorizeNext();
+                    setUserAnswer("");
+                    setShowResult(false);
+                  }}
+                  className="w-full py-3 rounded-full bg-gradient-to-r from-orange to-ocean text-white font-semibold hover:opacity-90 transition-opacity"
+                >
+                  Next Formula
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Flashcards Grid */}
-        {!memorizeMode && (
+        {!memorizeMode && !activeRecallMode && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredFormulas.map((formula, index) => (
               <div

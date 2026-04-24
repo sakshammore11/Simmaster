@@ -103,6 +103,11 @@ interface StoreState {
   getOverallProgress: () => { learned: number; total: number; practiced: number };
   getMarksPotential: () => { currentMarks: number; maxMarks: number; percentage: number };
 
+  // Formula Mastery (Spaced Repetition)
+  formulaMastery: Record<string, { strength: "Weak" | "Medium" | "Strong"; lastReviewed: number; reviewCount: number }>;
+  updateFormulaMastery: (formulaId: string, correct: boolean) => void;
+  getWeakFormulas: () => string[];
+
   // Search
   searchQuery: string;
   setSearchQuery: (query: string) => void;
@@ -362,17 +367,51 @@ export const useStore = create<StoreState>((set, get) => ({
         const learnedConcepts = Object.keys(state.conceptProgress).filter(
           id => state.conceptProgress[id]?.learned
         );
-        
+
         // Assume average marks per concept is 6 (can be refined with actual data)
         const currentMarks = learnedConcepts.length * 6;
         const maxMarks = 100; // Total exam marks
         const percentage = (currentMarks / maxMarks) * 100;
-        
+
         return {
           currentMarks,
           maxMarks,
           percentage: Math.min(100, percentage),
         };
+      },
+      formulaMastery: {},
+      updateFormulaMastery: (formulaId, correct) =>
+        set((state) => {
+          const current = state.formulaMastery[formulaId] || {
+            strength: "Weak" as const,
+            lastReviewed: 0,
+            reviewCount: 0,
+          };
+
+          const newStrength = correct
+            ? current.strength === "Weak"
+              ? "Medium"
+              : current.strength === "Medium"
+              ? "Strong"
+              : "Strong"
+            : "Weak";
+
+          return {
+            formulaMastery: {
+              ...state.formulaMastery,
+              [formulaId]: {
+                strength: newStrength,
+                lastReviewed: Date.now(),
+                reviewCount: current.reviewCount + 1,
+              },
+            },
+          };
+        }),
+      getWeakFormulas: () => {
+        const state = get();
+        return Object.entries(state.formulaMastery)
+          .filter(([_, data]) => data.strength === "Weak")
+          .map(([id]) => id);
       },
       markHandwritten: (itemId, photo) =>
         set((state) => {
