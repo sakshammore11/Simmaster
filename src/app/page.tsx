@@ -234,7 +234,7 @@ export default function Home() {
             className="glass-card p-4 hover:scale-[1.02] transition-all group"
           >
             <BookOpen className="w-6 h-6 mb-2 text-orange group-hover:scale-110 transition-transform" />
-            <div className="font-semibold">Learn</div>
+            <div className="font-semibold">Understand</div>
             <div className="text-xs opacity-70">Study concepts</div>
           </Link>
           <Link
@@ -242,7 +242,7 @@ export default function Home() {
             className="glass-card p-4 hover:scale-[1.02] transition-all group"
           >
             <Calculator className="w-6 h-6 mb-2 text-ocean group-hover:scale-110 transition-transform" />
-            <div className="font-semibold">Practice</div>
+            <div className="font-semibold">Score</div>
             <div className="text-xs opacity-70">Solve questions</div>
           </Link>
           <Link
@@ -258,7 +258,7 @@ export default function Home() {
             className="glass-card p-4 hover:scale-[1.02] transition-all group"
           >
             <Target className="w-6 h-6 mb-2 text-red group-hover:scale-110 transition-transform" />
-            <div className="font-semibold">Exam</div>
+            <div className="font-semibold">Simulate</div>
             <div className="text-xs opacity-70">Test yourself</div>
           </Link>
           <Link
