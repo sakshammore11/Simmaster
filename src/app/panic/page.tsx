@@ -78,7 +78,7 @@ export default function PanicPage() {
         </div>
 
         {/* Tabs */}
-        <div="flex flex-wrap gap-2 mb-6">
+        <div className="flex flex-wrap gap-2 mb-6">
           {tabs.map((tab) => (
             <button
               key={tab.id}
