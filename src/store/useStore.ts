@@ -18,6 +18,12 @@ interface Mistake {
   timestamp: number;
   yourAnswer?: string;
   correctAnswer?: string;
+  // Mark Loss Analysis
+  conceptId?: string;
+  formulaId?: string;
+  questionType?: "Numerical" | "Theory" | "Derivation";
+  marksLost?: number;
+  lossReason?: "Concept gap" | "Silly mistake" | "Formula confusion" | "Calculation error";
 }
 
 interface Bookmark {
@@ -65,6 +71,12 @@ interface StoreState {
   mistakes: Mistake[];
   addMistake: (mistake: Omit<Mistake, "id" | "timestamp">) => void;
   getWeakTopics: () => { topic: string; count: number }[];
+  getMarkLossAnalysis: () => {
+    totalMarksLost: number;
+    byReason: Record<string, number>;
+    byConcept: Record<string, number>;
+    byFormula: Record<string, number>;
+  };
 
   // Exam State
   examState: ExamState;
@@ -159,6 +171,35 @@ export const useStore = create<StoreState>((set, get) => ({
         return Object.entries(topicCounts)
           .map(([topic, count]) => ({ topic, count }))
           .sort((a, b) => b.count - a.count);
+      },
+      getMarkLossAnalysis: () => {
+        const state = get();
+        const byReason: Record<string, number> = {};
+        const byConcept: Record<string, number> = {};
+        const byFormula: Record<string, number> = {};
+        let totalMarksLost = 0;
+
+        state.mistakes.forEach((mistake) => {
+          const marks = mistake.marksLost || 0;
+          totalMarksLost += marks;
+
+          if (mistake.lossReason) {
+            byReason[mistake.lossReason] = (byReason[mistake.lossReason] || 0) + marks;
+          }
+          if (mistake.conceptId) {
+            byConcept[mistake.conceptId] = (byConcept[mistake.conceptId] || 0) + marks;
+          }
+          if (mistake.formulaId) {
+            byFormula[mistake.formulaId] = (byFormula[mistake.formulaId] || 0) + marks;
+          }
+        });
+
+        return {
+          totalMarksLost,
+          byReason,
+          byConcept,
+          byFormula,
+        };
       },
 
       // Exam State

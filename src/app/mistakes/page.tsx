@@ -8,10 +8,11 @@ import { pyqData } from "@/data/pyqs";
 import { syllabusData } from "@/data/syllabus";
 
 export default function MistakesPage() {
-  const { mistakes, getWeakTopics, practiceProgress } = useStore();
+  const { mistakes, getWeakTopics, practiceProgress, getMarkLossAnalysis } = useStore();
   const [selectedTopic, setSelectedTopic] = useState<string>("All");
 
   const weakTopics = getWeakTopics();
+  const markLossAnalysis = getMarkLossAnalysis();
   const topics = Array.from(new Set(mistakes.map((m) => m.topic)));
 
   const filteredMistakes =
@@ -66,6 +67,54 @@ export default function MistakesPage() {
           </div>
         ) : (
           <>
+            {/* Mark Loss Analysis Dashboard */}
+            <div className="glass-card p-6 mb-8 border-2 border-red/50 bg-gradient-to-r from-red/10 to-orange/10">
+              <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-red">
+                <AlertCircle className="w-5 h-5" />
+                Mark Loss Analysis
+              </h2>
+              <div className="mb-4">
+                <div className="text-3xl font-bold text-red">{markLossAnalysis.totalMarksLost}</div>
+                <div className="text-sm opacity-70">Total marks lost</div>
+              </div>
+
+              {Object.keys(markLossAnalysis.byReason).length > 0 && (
+                <div className="mb-4">
+                  <div className="text-sm font-semibold mb-2">Loss by Reason:</div>
+                  <div className="space-y-2">
+                    {Object.entries(markLossAnalysis.byReason).map(([reason, marks]) => (
+                      <div key={reason} className="flex items-center justify-between text-sm">
+                        <span className="opacity-70">{reason}</span>
+                        <span className="font-semibold text-red">-{marks} marks</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {Object.keys(markLossAnalysis.byConcept).length > 0 && (
+                <div>
+                  <div className="text-sm font-semibold mb-2">Top Concept Losses:</div>
+                  <div className="space-y-2">
+                    {Object.entries(markLossAnalysis.byConcept)
+                      .sort((a, b) => b[1] - a[1])
+                      .slice(0, 3)
+                      .map(([conceptId, marks]) => {
+                        const concept = syllabusData
+                          .flatMap(u => u.concepts)
+                          .find(c => c.id === conceptId);
+                        return (
+                          <div key={conceptId} className="flex items-center justify-between text-sm">
+                            <span className="opacity-70">{concept?.title || conceptId}</span>
+                            <span className="font-semibold text-red">-{marks} marks</span>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Weak Topics Overview */}
             <div className="glass-card p-6 mb-8">
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
