@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ArrowLeft, Clock, CheckCircle, XCircle, Play } from "lucide-react";
 import { pyqData, type PYQ } from "@/data/pyqs";
+import { syllabusData } from "@/data/syllabus";
 import { useStore } from "@/store/useStore";
 import LearningRequirements from "@/components/LearningRequirements";
 
@@ -13,6 +14,7 @@ export default function ExamPage() {
   const [showResults, setShowResults] = useState(false);
   const [score, setScore] = useState(0);
   const [customTime, setCustomTime] = useState<number>(30);
+  const [examPreset, setExamPreset] = useState<"custom" | "most-expected" | "high-weight" | "last-night">("custom");
 
   useEffect(() => {
     if (examState.isActive && examState.timeLimit > 0) {
@@ -27,8 +29,55 @@ export default function ExamPage() {
   }, [examState.isActive, examState.startTime, examState.timeLimit]);
 
   const handleStartExam = () => {
-    const questions = pyqData.map((pyq) => pyq.id);
-    startExam(questions, customTime); // Use custom time
+    let questions: string[] = [];
+    let timeLimit = customTime;
+
+    switch (examPreset) {
+      case "most-expected":
+        // Filter by high importanceScore and recent PYQs
+        questions = pyqData
+          .filter(pyq => {
+            const concept = syllabusData
+              .flatMap(u => u.concepts)
+              .find(c => c.id === pyq.id);
+            return (concept?.importanceScore || 0) >= 80 && (concept?.pyqYears?.includes("2024") || false);
+          })
+          .map(pyq => pyq.id)
+          .slice(0, 20);
+        timeLimit = 45;
+        break;
+      case "high-weight":
+        // Filter by high marksWeightage
+        questions = pyqData
+          .filter(pyq => {
+            const concept = syllabusData
+              .flatMap(u => u.concepts)
+              .find(c => c.id === pyq.id);
+            return (concept?.marksWeightage || 0) >= 8;
+          })
+          .map(pyq => pyq.id)
+          .slice(0, 15);
+        timeLimit = 60;
+        break;
+      case "last-night":
+        // Top 10 most important formulas/concepts
+        questions = pyqData
+          .filter(pyq => {
+            const concept = syllabusData
+              .flatMap(u => u.concepts)
+              .find(c => c.id === pyq.id);
+            return (concept?.importanceScore || 0) >= 90;
+          })
+          .map(pyq => pyq.id)
+          .slice(0, 10);
+        timeLimit = 30;
+        break;
+      default:
+        questions = pyqData.map((pyq) => pyq.id);
+        timeLimit = customTime;
+    }
+
+    startExam(questions, timeLimit);
   };
 
   const handleSubmitAnswer = () => {
@@ -105,47 +154,100 @@ export default function ExamPage() {
               </div>
             </div>
 
-            {/* Time Input */}
+            {/* Exam Presets */}
             <div className="mb-8">
-              <label className="block text-sm opacity-70 mb-2">Set exam time (minutes)</label>
-              <div className="flex items-center justify-center gap-4">
+              <label className="block text-sm opacity-70 mb-2">Select Exam Type</label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <button
-                  onClick={() => setCustomTime(Math.max(5, customTime - 5))}
-                  className="w-10 h-10 rounded-full glass hover:bg-white/10 transition-colors font-bold"
+                  onClick={() => { setExamPreset("custom"); setCustomTime(30); }}
+                  className={`p-4 rounded-xl transition-all text-center ${
+                    examPreset === "custom"
+                      ? "bg-gradient-to-r from-orange to-ocean text-white"
+                      : "glass hover:bg-white/10"
+                  }`}
                 >
-                  -
+                  <div className="font-semibold">Custom</div>
+                  <div className="text-xs opacity-70">Full syllabus</div>
                 </button>
-                <input
-                  type="number"
-                  value={customTime}
-                  onChange={(e) => setCustomTime(Math.max(5, parseInt(e.target.value) || 5))}
-                  className="w-24 text-center text-2xl font-bold bg-white/10 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-orange/50"
-                  min="5"
-                  max="180"
-                />
                 <button
-                  onClick={() => setCustomTime(Math.min(180, customTime + 5))}
-                  className="w-10 h-10 rounded-full glass hover:bg-white/10 transition-colors font-bold"
+                  onClick={() => setExamPreset("most-expected")}
+                  className={`p-4 rounded-xl transition-all text-center ${
+                    examPreset === "most-expected"
+                      ? "bg-gradient-to-r from-orange to-ocean text-white"
+                      : "glass hover:bg-white/10"
+                  }`}
                 >
-                  +
+                  <div className="font-semibold">Most Expected</div>
+                  <div className="text-xs opacity-70">20 Q • 45 min</div>
                 </button>
-              </div>
-              <div className="flex gap-2 mt-3 justify-center">
-                {[15, 30, 45, 60, 90, 120].map((time) => (
-                  <button
-                    key={time}
-                    onClick={() => setCustomTime(time)}
-                    className={`px-3 py-1 rounded-full text-sm transition-all ${
-                      customTime === time
-                        ? "bg-gradient-to-r from-orange to-ocean text-white"
-                        : "glass hover:bg-white/10"
-                    }`}
-                  >
-                    {time}m
-                  </button>
-                ))}
+                <button
+                  onClick={() => setExamPreset("high-weight")}
+                  className={`p-4 rounded-xl transition-all text-center ${
+                    examPreset === "high-weight"
+                      ? "bg-gradient-to-r from-orange to-ocean text-white"
+                      : "glass hover:bg-white/10"
+                  }`}
+                >
+                  <div className="font-semibold">High Weight</div>
+                  <div className="text-xs opacity-70">15 Q • 60 min</div>
+                </button>
+                <button
+                  onClick={() => setExamPreset("last-night")}
+                  className={`p-4 rounded-xl transition-all text-center border-2 border-red/50 ${
+                    examPreset === "last-night"
+                      ? "bg-gradient-to-r from-red to-orange text-white"
+                      : "glass hover:bg-white/10"
+                  }`}
+                >
+                  <div className="font-semibold">Last Night</div>
+                  <div className="text-xs opacity-70">10 Q • 30 min</div>
+                </button>
               </div>
             </div>
+
+            {/* Time Input (only for custom) */}
+            {examPreset === "custom" && (
+              <div className="mb-8">
+                <label className="block text-sm opacity-70 mb-2">Set exam time (minutes)</label>
+                <div className="flex items-center justify-center gap-4">
+                  <button
+                    onClick={() => setCustomTime(Math.max(5, customTime - 5))}
+                    className="w-10 h-10 rounded-full glass hover:bg-white/10 transition-colors font-bold"
+                  >
+                    -
+                  </button>
+                  <input
+                    type="number"
+                    value={customTime}
+                    onChange={(e) => setCustomTime(Math.max(5, parseInt(e.target.value) || 5))}
+                    className="w-24 text-center text-2xl font-bold bg-white/10 rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-orange/50"
+                    min="5"
+                    max="180"
+                  />
+                  <button
+                    onClick={() => setCustomTime(Math.min(180, customTime + 5))}
+                    className="w-10 h-10 rounded-full glass hover:bg-white/10 transition-colors font-bold"
+                  >
+                    +
+                  </button>
+                </div>
+                <div className="flex gap-2 mt-3 justify-center">
+                  {[15, 30, 45, 60, 90, 120].map((time) => (
+                    <button
+                      key={time}
+                      onClick={() => setCustomTime(time)}
+                      className={`px-3 py-1 rounded-full text-sm transition-all ${
+                        customTime === time
+                          ? "bg-gradient-to-r from-orange to-ocean text-white"
+                          : "glass hover:bg-white/10"
+                      }`}
+                    >
+                      {time}m
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <button
               onClick={handleStartExam}
