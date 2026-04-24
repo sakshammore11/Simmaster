@@ -175,6 +175,13 @@ export default function Home() {
       </header>
 
       <main className="max-w-4xl mx-auto p-4 space-y-6">
+        {/* Psychological Pressure Banner */}
+        <div className="glass-card p-4 mb-6 border-2 border-red/50 bg-gradient-to-r from-red/10 to-orange/10">
+          <p className="text-center font-semibold text-red">
+            ⏰ Every hour you waste = 2 marks lost. Focus on high-yield topics.
+          </p>
+        </div>
+
         {/* What to do next - MAIN FOCUS */}
         <div className="glass rounded-2xl p-6 border-2 border-orange/30">
           <h2 className="text-lg font-bold mb-4 flex items-center gap-2">

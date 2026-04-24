@@ -302,6 +302,7 @@ export default function LearnPage() {
                     <p className="text-sm opacity-70">Ignore the rest. This is enough to pass.</p>
                   </div>
                 </div>
+                <p className="text-xs text-red mt-2 font-semibold">⚠️ You have limited time. Master these first.</p>
               </div>
             )}
 
