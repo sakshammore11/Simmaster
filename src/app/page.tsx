@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { BookOpen, Calculator, Clock, Target, Lightbulb, AlertCircle, Search, Moon, Sun, Bookmark, ChevronRight, Play, ArrowRight, CheckCircle, Circle, LogOut, Cloud, CloudOff, RefreshCw, AlertTriangle } from "lucide-react";
+import { BookOpen, Calculator, Clock, Target, Lightbulb, AlertCircle, Search, Moon, Sun, Bookmark, ChevronRight, Play, ArrowRight, CheckCircle, Circle, LogOut, Cloud, CloudOff, RefreshCw, AlertTriangle, Brain } from "lucide-react";
 import { useStore } from "@/store/useStore";
 import { syllabusData } from "@/data/syllabus";
 import DailyProgress from "@/components/DailyProgress";
@@ -228,7 +228,7 @@ export default function Home() {
         <DailyProgress conceptProgress={conceptProgress} />
 
         {/* Simple Navigation */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-6">
           <Link
             href="/learn"
             className="glass-card p-4 hover:scale-[1.02] transition-all group"
@@ -252,6 +252,14 @@ export default function Home() {
             <Lightbulb className="w-6 h-6 mb-2 text-yellow group-hover:scale-110 transition-transform" />
             <div className="font-semibold">Formulas</div>
             <div className="text-xs opacity-70">Memorize</div>
+          </Link>
+          <Link
+            href="/patterns"
+            className="glass-card p-4 hover:scale-[1.02] transition-all group border-2 border-ocean/50 bg-gradient-to-br from-ocean/10 to-purple/10"
+          >
+            <Brain className="w-6 h-6 mb-2 text-ocean group-hover:scale-110 transition-transform" />
+            <div className="font-semibold text-ocean">Patterns</div>
+            <div className="text-xs opacity-70">Train brain</div>
           </Link>
           <Link
             href="/exam"
