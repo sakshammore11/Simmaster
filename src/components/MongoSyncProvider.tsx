@@ -101,23 +101,12 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     saveToLocalStorage(dataToSave);
   }, [bookmarks, mistakes, examState, practiceProgress, conceptProgress, darkMode, searchQuery, justPassMode, formulaMastery]);
 
-  // Debounced sync to MongoDB on any state change
+  // Immediate sync to MongoDB on any state change (MongoDB-first)
   useEffect(() => {
     if (!isAuthenticated) return;
 
-    if (syncTimeoutRef.current) {
-      clearTimeout(syncTimeoutRef.current);
-    }
-
-    syncTimeoutRef.current = setTimeout(() => {
-      syncToDB();
-    }, 1000); // Sync after 1 second of inactivity
-
-    return () => {
-      if (syncTimeoutRef.current) {
-        clearTimeout(syncTimeoutRef.current);
-      }
-    };
+    // Sync immediately without debounce
+    syncToDB();
   }, [bookmarks, mistakes, examState, practiceProgress, conceptProgress, darkMode, searchQuery, justPassMode, formulaMastery, syncToDB, isAuthenticated]);
 
   // Sync on page unload to prevent data loss
@@ -157,13 +146,13 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     };
   }, [isAuthenticated]);
 
-  // REMOVED: Auth gate - app should work without login (localStorage-first)
-  // useEffect(() => {
-  //   const path = window.location.pathname;
-  //   if (!isAuthenticated && path !== '/login' && path !== '/signup') {
-  //     router.push('/login');
-  //   }
-  // }, [isAuthenticated, router]);
+  // Auth gate - require login to use app (MongoDB-first)
+  useEffect(() => {
+    const path = window.location.pathname;
+    if (!isAuthenticated && path !== '/login' && path !== '/signup') {
+      router.push('/login');
+    }
+  }, [isAuthenticated, router]);
 
   return <>{children}</>;
 }
