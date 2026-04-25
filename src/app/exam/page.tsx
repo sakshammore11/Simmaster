@@ -333,8 +333,16 @@ export default function ExamPage() {
                 {Math.max(0, timeRemaining).toFixed(1)} min remaining
               </span>
             </div>
-            <div className="opacity-70">
-              Question {examState.currentQuestion + 1} of {examState.questions.length}
+            <div className="flex items-center gap-4">
+              <div className="opacity-70">
+                Question {examState.currentQuestion + 1} of {examState.questions.length}
+              </div>
+              <button
+                onClick={handleEndExam}
+                className="px-4 py-2 rounded-full bg-red/20 text-red hover:bg-red/30 transition-colors text-sm font-semibold"
+              >
+                End Test
+              </button>
             </div>
           </div>
           {/* Progress Bar */}
