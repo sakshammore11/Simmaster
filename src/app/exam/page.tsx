@@ -15,15 +15,18 @@ export default function ExamPage() {
   const [score, setScore] = useState(0);
   const [customTime, setCustomTime] = useState<number>(30);
   const [examPreset, setExamPreset] = useState<"custom" | "most-expected" | "high-weight" | "last-night">("custom");
+  const [timeLeft, setTimeLeft] = useState<number>(0);
 
   useEffect(() => {
     if (examState.isActive && examState.timeLimit > 0) {
       const timer = setInterval(() => {
         const elapsed = (Date.now() - examState.startTime) / 1000 / 60; // in minutes
+        const remaining = Math.max(0, examState.timeLimit - elapsed);
+        setTimeLeft(remaining);
         if (elapsed >= examState.timeLimit) {
           handleEndExam();
         }
-      }, 1000);
+      }, 100);
       return () => clearInterval(timer);
     }
   }, [examState.isActive, examState.startTime, examState.timeLimit]);
@@ -110,7 +113,6 @@ export default function ExamPage() {
     setCurrentAnswer("");
   };
 
-  const timeRemaining = examState.timeLimit - (Date.now() - examState.startTime) / 1000 / 60;
   const currentQuestionId = examState.questions[examState.currentQuestion];
   const currentPYQ = pyqData.find((pyq) => pyq.id === currentQuestionId);
 
@@ -328,9 +330,9 @@ export default function ExamPage() {
         <div className="sticky top-0 z-50 glass border-b border-white/10 px-4 py-3 mb-6 rounded-xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Clock className={`w-5 h-5 ${timeRemaining < 5 ? 'text-red-500 animate-pulse' : 'text-orange'}`} />
-              <span className={`font-semibold text-lg ${timeRemaining < 5 ? 'text-red-500' : ''}`}>
-                {Math.max(0, timeRemaining).toFixed(1)} min remaining
+              <Clock className={`w-5 h-5 ${timeLeft < 5 ? 'text-red-500 animate-pulse' : 'text-orange'}`} />
+              <span className={`font-semibold text-lg ${timeLeft < 5 ? 'text-red-500' : ''}`}>
+                {timeLeft.toFixed(1)} min remaining
               </span>
             </div>
             <div className="flex items-center gap-4">
@@ -348,9 +350,9 @@ export default function ExamPage() {
           {/* Progress Bar */}
           <div className="w-full h-2 bg-white/10 rounded-full mt-3 overflow-hidden">
             <div
-              className={`h-full transition-all duration-300 ${timeRemaining < 5 ? 'bg-red-500' : 'bg-gradient-to-r from-orange to-ocean'}`}
+              className={`h-full transition-all duration-300 ${timeLeft < 5 ? 'bg-red-500' : 'bg-gradient-to-r from-orange to-ocean'}`}
               style={{
-                width: `${(timeRemaining / examState.timeLimit) * 100}%`,
+                width: `${(timeLeft / examState.timeLimit) * 100}%`,
               }}
             />
           </div>
