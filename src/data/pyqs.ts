@@ -28,6 +28,7 @@ export interface PYQ {
   data?: any;
   answer?: string;
   youtubeUrl?: string;
+  important?: boolean;
 }
 
 export const pyqData: PYQ[] = [
