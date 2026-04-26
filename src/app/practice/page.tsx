@@ -21,6 +21,14 @@ export default function PracticePage() {
     return difficultyMatch && unitMatch;
   });
 
+  // Group by unit when "All Units" is selected
+  const groupedByUnit = selectedUnit === 0 
+    ? [1, 2, 3, 4, 5].map(unit => ({
+        unit,
+        questions: filteredPYQs.filter(pyq => pyq.unit === unit)
+      })).filter(group => group.questions.length > 0)
+    : [{ unit: selectedUnit, questions: filteredPYQs }];
+
   const getProgress = (topic: string) => {
     const progress = practiceProgress[topic];
     if (!progress) return null;
@@ -89,95 +97,109 @@ export default function PracticePage() {
           Showing {filteredPYQs.length} questions
         </div>
 
-        <div className="grid gap-4">
-          {filteredPYQs.map((pyq, index) => {
-            const progress = getProgress(pyq.topic);
-            return (
-              <div
-                key={pyq.id}
-                className="glass-card p-5 animate-fade-in"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="px-2 py-0.5 rounded-full bg-orange/20 text-orange text-xs">
-                      Unit {pyq.unit}
-                    </span>
-                    <span className="px-2 py-0.5 rounded-full bg-ocean/20 text-ocean text-xs">
-                      {pyq.marks} Marks
-                    </span>
-                    <span
-                      className={`px-2 py-0.5 rounded-full text-xs ${
-                        pyq.difficulty === "Easy"
-                          ? "bg-green-20 text-green"
-                          : pyq.difficulty === "Medium"
-                          ? "bg-yellow-20 text-yellow"
-                          : pyq.difficulty === "PYQ Level"
-                          ? "bg-orange/20 text-orange"
-                          : "bg-red-20 text-red"
-                      }`}
-                    >
-                      {pyq.difficulty}
-                    </span>
-                    <span className="px-2 py-0.5 rounded-full bg-peach/20 text-peach text-xs">
-                      {pyq.type}
-                    </span>
-                  </div>
-                  {progress && (
-                    <div className="text-right">
-                      <div className="text-sm font-semibold">{progress.percentage.toFixed(0)}%</div>
-                      <div className="text-xs opacity-70">
-                        {progress.correct}/{progress.total} correct
+        {groupedByUnit.map((group, groupIndex) => (
+          <div key={group.unit} className="mb-8">
+            {selectedUnit === 0 && (
+              <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                <span className="px-3 py-1 rounded-full bg-gradient-to-r from-orange to-ocean text-white text-sm">
+                  Unit {group.unit}
+                </span>
+                <span className="opacity-70 text-lg">({group.questions.length} questions)</span>
+              </h2>
+            )}
+            <div className="grid gap-4">
+              {group.questions.map((pyq, index) => {
+                const progress = getProgress(pyq.topic);
+                return (
+                  <div
+                    key={pyq.id}
+                    className="glass-card p-5 animate-fade-in"
+                    style={{ animationDelay: `${(groupIndex * 100) + (index * 50)}ms` }}
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {selectedUnit === 0 && (
+                          <span className="px-2 py-0.5 rounded-full bg-orange/20 text-orange text-xs">
+                            Unit {pyq.unit}
+                          </span>
+                        )}
+                        <span className="px-2 py-0.5 rounded-full bg-ocean/20 text-ocean text-xs">
+                          {pyq.marks} Marks
+                        </span>
+                        <span
+                          className={`px-2 py-0.5 rounded-full text-xs ${
+                            pyq.difficulty === "Easy"
+                              ? "bg-green-20 text-green"
+                              : pyq.difficulty === "Medium"
+                              ? "bg-yellow-20 text-yellow"
+                              : pyq.difficulty === "PYQ Level"
+                              ? "bg-orange/20 text-orange"
+                              : "bg-red-20 text-red"
+                          }`}
+                        >
+                          {pyq.difficulty}
+                        </span>
+                        <span className="px-2 py-0.5 rounded-full bg-peach/20 text-peach text-xs">
+                          {pyq.type}
+                        </span>
                       </div>
+                      {progress && (
+                        <div className="text-right">
+                          <div className="text-sm font-semibold">{progress.percentage.toFixed(0)}%</div>
+                          <div className="text-xs opacity-70">
+                            {progress.correct}/{progress.total} correct
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
 
-                <h3 className="text-lg font-semibold mb-2">{pyq.topic}</h3>
-                <p className="opacity-70 text-sm line-clamp-2 mb-4">{pyq.question}</p>
+                    <h3 className="text-lg font-semibold mb-2">{pyq.topic}</h3>
+                    <p className="opacity-70 text-sm line-clamp-2 mb-4">{pyq.question}</p>
 
-                {/* Learning Requirements - Strict Mode */}
-                <LearningRequirements
-                  itemId={pyq.id}
-                  youtubeUrl={pyq.youtubeUrl}
-                  onPhotoUploaded={(photo: string) => markHandwritten(pyq.id, photo)}
-                  onPhotoRemoved={(photoIndex: number) => removeHandwrittenPhoto(pyq.id, photoIndex)}
-                  photos={conceptProgress[pyq.id]?.handwrittenPhotos || []}
-                  isVideoWatched={isVideoWatched(pyq.id)}
-                  onVideoWatched={() => markVideoWatched(pyq.id)}
-                  requirementsMet={isRequirementsMet(pyq.id)}
-                />
+                    {/* Learning Requirements - Strict Mode */}
+                    <LearningRequirements
+                      itemId={pyq.id}
+                      youtubeUrl={pyq.youtubeUrl}
+                      onPhotoUploaded={(photo: string) => markHandwritten(pyq.id, photo)}
+                      onPhotoRemoved={(photoIndex: number) => removeHandwrittenPhoto(pyq.id, photoIndex)}
+                      photos={conceptProgress[pyq.id]?.handwrittenPhotos || []}
+                      isVideoWatched={isVideoWatched(pyq.id)}
+                      onVideoWatched={() => markVideoWatched(pyq.id)}
+                      requirementsMet={isRequirementsMet(pyq.id)}
+                    />
 
-                <div className="flex gap-2">
-                  <Link
-                    href={`/solver#${pyq.id}`}
-                    className="flex-1 py-2 rounded-full glass hover:bg-white/10 transition-colors text-center text-sm font-semibold"
-                  >
-                    View Solution
-                  </Link>
-                  <button
-                    onClick={() => {
-                      updatePracticeProgress(pyq.topic, true);
-                      markConceptPracticed(pyq.topic);
-                    }}
-                    className="px-4 py-2 rounded-full bg-green/20 text-green hover:bg-green/30 transition-colors text-sm"
-                  >
-                    ✓
-                  </button>
-                  <button
-                    onClick={() => {
-                      updatePracticeProgress(pyq.topic, false);
-                      markConceptPracticed(pyq.topic);
-                    }}
-                    className="px-4 py-2 rounded-full bg-red/20 text-red hover:bg-red/30 transition-colors text-sm"
-                  >
-                    ✗
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+                    <div className="flex gap-2">
+                      <Link
+                        href={`/solver#${pyq.id}`}
+                        className="flex-1 py-2 rounded-full glass hover:bg-white/10 transition-colors text-center text-sm font-semibold"
+                      >
+                        View Solution
+                      </Link>
+                      <button
+                        onClick={() => {
+                          updatePracticeProgress(pyq.topic, true);
+                          markConceptPracticed(pyq.topic);
+                        }}
+                        className="px-4 py-2 rounded-full bg-green/20 text-green hover:bg-green/30 transition-colors text-sm"
+                      >
+                        ✓
+                      </button>
+                      <button
+                        onClick={() => {
+                          updatePracticeProgress(pyq.topic, false);
+                          markConceptPracticed(pyq.topic);
+                        }}
+                        className="px-4 py-2 rounded-full bg-red/20 text-red hover:bg-red/30 transition-colors text-sm"
+                      >
+                        ✗
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ))}
 
         {filteredPYQs.length === 0 && (
           <div className="glass-card p-12 text-center">
