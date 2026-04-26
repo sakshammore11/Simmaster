@@ -52,6 +52,9 @@ interface ExamState {
   startTime: number;
   endTime?: number;
   timeLimit: number; // in minutes
+  markedForReview: Set<string>;
+  questionTimeSpent: Record<string, number>; // time in seconds per question
+  questionStartTime: Record<string, number>; // when user started viewing each question
 }
 
 interface StoreState {
@@ -83,8 +86,12 @@ interface StoreState {
   startExam: (questions: string[], timeLimit: number) => void;
   submitAnswer: (questionId: string, answer: string) => void;
   nextQuestion: () => void;
+  previousQuestion: () => void;
+  jumpToQuestion: (index: number) => void;
+  toggleMarkForReview: (questionId: string) => void;
   endExam: () => void;
   resetExam: () => void;
+  trackQuestionTime: (questionId: string) => void;
 
   // Practice Progress
   practiceProgress: Record<string, { correct: number; total: number }>;
@@ -216,6 +223,9 @@ export const useStore = create<StoreState>((set, get) => ({
         answers: {},
         startTime: 0,
         timeLimit: 60,
+        markedForReview: new Set(),
+        questionTimeSpent: {},
+        questionStartTime: {},
       },
       startExam: (questions, timeLimit) =>
         set(() => {
@@ -228,7 +238,7 @@ export const useStore = create<StoreState>((set, get) => ({
             console.error('Invalid timeLimit provided to startExam');
             return {}; // Return empty state to prevent update
           }
-          
+
           return {
             examState: {
               isActive: true,
@@ -237,6 +247,9 @@ export const useStore = create<StoreState>((set, get) => ({
               answers: {},
               startTime: Date.now(),
               timeLimit,
+              markedForReview: new Set(),
+              questionTimeSpent: {},
+              questionStartTime: {},
             },
           };
         }),
@@ -269,14 +282,94 @@ export const useStore = create<StoreState>((set, get) => ({
             console.error('Cannot go to next question: exam not active');
             return state;
           }
-          
+
           const nextIndex = state.examState.currentQuestion + 1;
           const maxIndex = Math.max(0, state.examState.questions.length - 1);
-          
+
           return {
             examState: {
               ...state.examState,
               currentQuestion: Math.min(nextIndex, maxIndex),
+            },
+          };
+        }),
+      previousQuestion: () =>
+        set((state) => {
+          if (!state.examState.isActive) {
+            console.error('Cannot go to previous question: exam not active');
+            return state;
+          }
+
+          const prevIndex = state.examState.currentQuestion - 1;
+
+          return {
+            examState: {
+              ...state.examState,
+              currentQuestion: Math.max(0, prevIndex),
+            },
+          };
+        }),
+      jumpToQuestion: (index) =>
+        set((state) => {
+          if (!state.examState.isActive) {
+            console.error('Cannot jump to question: exam not active');
+            return state;
+          }
+
+          if (index < 0 || index >= state.examState.questions.length) {
+            console.error('Invalid question index');
+            return state;
+          }
+
+          return {
+            examState: {
+              ...state.examState,
+              currentQuestion: index,
+            },
+          };
+        }),
+      toggleMarkForReview: (questionId) =>
+        set((state) => {
+          if (!state.examState.isActive) {
+            console.error('Cannot mark for review: exam not active');
+            return state;
+          }
+
+          const newMarked = new Set(state.examState.markedForReview);
+          if (newMarked.has(questionId)) {
+            newMarked.delete(questionId);
+          } else {
+            newMarked.add(questionId);
+          }
+
+          return {
+            examState: {
+              ...state.examState,
+              markedForReview: newMarked,
+            },
+          };
+        }),
+      trackQuestionTime: (questionId) =>
+        set((state) => {
+          if (!state.examState.isActive) {
+            return state;
+          }
+
+          const now = Date.now();
+          const questionStartTime = state.examState.questionStartTime[questionId] || now;
+          const timeSpent = (now - questionStartTime) / 1000; // in seconds
+
+          return {
+            examState: {
+              ...state.examState,
+              questionTimeSpent: {
+                ...state.examState.questionTimeSpent,
+                [questionId]: (state.examState.questionTimeSpent[questionId] || 0) + timeSpent,
+              },
+              questionStartTime: {
+                ...state.examState.questionStartTime,
+                [questionId]: now,
+              },
             },
           };
         }),
@@ -293,6 +386,9 @@ export const useStore = create<StoreState>((set, get) => ({
             answers: {},
             startTime: 0,
             timeLimit: 60,
+            markedForReview: new Set(),
+            questionTimeSpent: {},
+            questionStartTime: {},
           },
         }),
 
@@ -779,6 +875,9 @@ export const useStore = create<StoreState>((set, get) => ({
               answers: {},
               startTime: 0,
               timeLimit: 60,
+              markedForReview: new Set(),
+              questionTimeSpent: {},
+              questionStartTime: {},
             },
             practiceProgress: {},
             conceptProgress: {},
