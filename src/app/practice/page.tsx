@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Target, Filter } from "lucide-react";
+import { ArrowLeft, Target, Filter, ChevronDown, ChevronUp, CheckCircle, XCircle } from "lucide-react";
 import { pyqData } from "@/data/pyqs";
 import { useStore } from "@/store/useStore";
 import LearningRequirements from "@/components/LearningRequirements";
@@ -11,6 +11,7 @@ export default function PracticePage() {
   const { updatePracticeProgress, practiceProgress, markConceptPracticed, markHandwritten, removeHandwrittenPhoto, conceptProgress, markVideoWatched, isVideoWatched, isRequirementsMet } = useStore();
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("All");
   const [selectedUnit, setSelectedUnit] = useState<number>(0);
+  const [expandedQuestion, setExpandedQuestion] = useState<string | null>(null);
 
   const difficulties = ["All", "Easy", "Medium", "PYQ Level", "Hard"];
   const units = [0, 1, 2, 3, 4, 5];
@@ -110,6 +111,7 @@ export default function PracticePage() {
             <div className="grid gap-4">
               {group.questions.map((pyq, index) => {
                 const progress = getProgress(pyq.topic);
+                const isExpanded = expandedQuestion === pyq.id;
                 return (
                   <div
                     key={pyq.id}
@@ -143,55 +145,104 @@ export default function PracticePage() {
                           {pyq.type}
                         </span>
                       </div>
-                      {progress && (
-                        <div className="text-right">
-                          <div className="text-sm font-semibold">{progress.percentage.toFixed(0)}%</div>
-                          <div className="text-xs opacity-70">
-                            {progress.correct}/{progress.total} correct
+                      <div className="flex items-center gap-2">
+                        {progress && (
+                          <div className="text-right">
+                            <div className="text-sm font-semibold">{progress.percentage.toFixed(0)}%</div>
+                            <div className="text-xs opacity-70">
+                              {progress.correct}/{progress.total} correct
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
+                        <button
+                          onClick={() => setExpandedQuestion(isExpanded ? null : pyq.id)}
+                          className="p-2 rounded-full glass hover:bg-white/10 transition-colors"
+                        >
+                          {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                        </button>
+                      </div>
                     </div>
 
                     <h3 className="text-lg font-semibold mb-2">{pyq.topic}</h3>
-                    <p className="opacity-70 text-sm line-clamp-2 mb-4">{pyq.question}</p>
+                    <p className="opacity-70 text-sm mb-4 whitespace-pre-wrap">{pyq.question}</p>
 
-                    {/* Learning Requirements - Strict Mode */}
-                    <LearningRequirements
-                      itemId={pyq.id}
-                      youtubeUrl={pyq.youtubeUrl}
-                      onPhotoUploaded={(photo: string) => markHandwritten(pyq.id, photo)}
-                      onPhotoRemoved={(photoIndex: number) => removeHandwrittenPhoto(pyq.id, photoIndex)}
-                      photos={conceptProgress[pyq.id]?.handwrittenPhotos || []}
-                      isVideoWatched={isVideoWatched(pyq.id)}
-                      onVideoWatched={() => markVideoWatched(pyq.id)}
-                      requirementsMet={isRequirementsMet(pyq.id)}
-                    />
+                    {isExpanded && (
+                      <div className="border-t border-white/10 pt-4 mt-4 space-y-4">
+                        {/* Solution Steps */}
+                        {pyq.steps && pyq.steps.length > 0 && (
+                          <div>
+                            <h4 className="font-semibold mb-3 flex items-center gap-2">
+                              <span className="w-2 h-2 rounded-full bg-ocean"></span>
+                              Solution Steps
+                            </h4>
+                            <div className="space-y-3">
+                              {pyq.steps.map((step, stepIndex) => (
+                                <div key={stepIndex} className="pl-4 border-l-2 border-white/10">
+                                  <div className="font-medium text-sm mb-1">Step {step.step}: {step.title}</div>
+                                  <div className="text-xs opacity-70 mb-1">{step.explanation}</div>
+                                  {step.calculation && (
+                                    <div className="text-xs bg-black/20 p-2 rounded mt-1 font-mono">
+                                      {step.calculation}
+                                    </div>
+                                  )}
+                                  {step.finalAnswer && (
+                                    <div className="text-xs text-green font-semibold mt-1">
+                                      ✓ {step.finalAnswer}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
 
-                    <div className="flex gap-2">
-                      <Link
-                        href={`/solver#${pyq.id}`}
-                        className="flex-1 py-2 rounded-full glass hover:bg-white/10 transition-colors text-center text-sm font-semibold"
-                      >
-                        View Solution
-                      </Link>
+                        {/* Answer for theoretical questions */}
+                        {pyq.answer && !pyq.steps && (
+                          <div>
+                            <h4 className="font-semibold mb-3 flex items-center gap-2">
+                              <span className="w-2 h-2 rounded-full bg-ocean"></span>
+                              Answer
+                            </h4>
+                            <div className="text-sm opacity-90 whitespace-pre-wrap bg-black/20 p-3 rounded">
+                              {pyq.answer}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Learning Requirements - Strict Mode */}
+                        <LearningRequirements
+                          itemId={pyq.id}
+                          youtubeUrl={pyq.youtubeUrl}
+                          onPhotoUploaded={(photo: string) => markHandwritten(pyq.id, photo)}
+                          onPhotoRemoved={(photoIndex: number) => removeHandwrittenPhoto(pyq.id, photoIndex)}
+                          photos={conceptProgress[pyq.id]?.handwrittenPhotos || []}
+                          isVideoWatched={isVideoWatched(pyq.id)}
+                          onVideoWatched={() => markVideoWatched(pyq.id)}
+                          requirementsMet={isRequirementsMet(pyq.id)}
+                        />
+                      </div>
+                    )}
+
+                    <div className="flex gap-2 mt-4">
                       <button
                         onClick={() => {
                           updatePracticeProgress(pyq.topic, true);
                           markConceptPracticed(pyq.topic);
                         }}
-                        className="px-4 py-2 rounded-full bg-green/20 text-green hover:bg-green/30 transition-colors text-sm"
+                        className="flex-1 py-2 rounded-full bg-green/20 text-green hover:bg-green/30 transition-colors text-sm font-semibold flex items-center justify-center gap-2"
                       >
-                        ✓
+                        <CheckCircle className="w-4 h-4" />
+                        Correct
                       </button>
                       <button
                         onClick={() => {
                           updatePracticeProgress(pyq.topic, false);
                           markConceptPracticed(pyq.topic);
                         }}
-                        className="px-4 py-2 rounded-full bg-red/20 text-red hover:bg-red/30 transition-colors text-sm"
+                        className="flex-1 py-2 rounded-full bg-red/20 text-red hover:bg-red/30 transition-colors text-sm font-semibold flex items-center justify-center gap-2"
                       >
-                        ✗
+                        <XCircle className="w-4 h-4" />
+                        Incorrect
                       </button>
                     </div>
                   </div>
